@@ -1,26 +1,25 @@
-const sql = require('mssql');
+const sql = require('mssql/msnodesqlv8');
 
-// Ganti data di bawah ini sesuai dengan yang kamu pakai saat login di SSMS
 const config = {
-    user: 'User', // Username default SQL Server (biasanya 'sa' / System Administrator)
-    password: 'User123', // Masukkan passwordmu di sini
-    server: 'localhost', // Atau gunakan nama servermu, contoh: 'localhost\\SQLEXPRESS'
-    database: 'TaskWeaverDB', // Ganti dengan nama database yang kamu buat di SSMS
+    server: '.', // Pake titik (.) biar langsung lewat jalur VIP kayak SSMS
+    database: 'TaskWeaverDB',
+    driver: 'msnodesqlv8',
     options: {
-        encrypt: false, 
-        trustServerCertificate: true // Sangat penting agar Node.js mau connect ke database lokal
+        trustedConnection: true,
+        trustServerCertificate: true
     }
 };
 
-// Fungsi untuk menyambungkan ke database
 async function connectDB() {
+    console.log('⏳ Nyoba dobrak pintu pake jalur VIP (.) ...');
     try {
         const pool = await sql.connect(config);
-        console.log('✅ Yey! Backend berhasil terhubung ke Microsoft SQL Server!');
+        console.log('✅ ANJAY TEMBUS! Database terhubung bos!');
         return pool;
     } catch (err) {
-        console.error('❌ Gagal terhubung ke database. Cek lagi username/password-nya:', err);
+        console.error('❌ GAGAL MASUK:', err.message);
     }
 }
 
 module.exports = connectDB;
+

@@ -1,8 +1,8 @@
 const express = require('express');
-const connectDB = require('./db'); // Memanggil file db.js
+const connectDB = require('./src/config/db.js');
 const app = express();
 const port = 3000;
-const sql = require('mssql')
+const sql = require('mssql/msnodesqlv8');
 
 // Jalankan fungsi koneksi database
 connectDB();
@@ -11,12 +11,10 @@ connectDB();
 // DAFTAR ENDPOINT / API
 // ----------------------------------------------------
 
-// Endpoint 1: Jalur Utama (Biasanya untuk cek status server)
 app.get('/', (req, res) => {
     res.send('Backend TaskWeaver berjalan!');
 });
 
-// Endpoint 2: Jalur untuk mengetes respon JSON
 app.get('/api/test-data', (req, res) => {
     res.json({
         status: "sukses",
@@ -30,24 +28,20 @@ app.get('/api/test-data', (req, res) => {
 
 app.get('/api/tasks', async (req, res) => {
     try {
-        // Jalankan perintah (query) SQL Server
-        // Ganti 'Tasks' dengan nama tabel yang kamu buat di SSMS
-        const result = await sql.query('SELECT * FROM Tasks'); 
-        
-        // Kirim hasilnya ke frontend dalam format JSON
+        // Nama tabel disesuaikan dengan yang ada di SSMS kamu
+        const result = await sql.query('SELECT * FROM trTask');
+
         res.json({
             status: "sukses",
-            data: result.recordset // .recordset adalah tempat data aslinya berada
+            data: result.recordset
         });
     } catch (err) {
         console.error(err);
         res.status(500).json({ pesan: "Terjadi kesalahan pada server" });
     }
 });
-// Nanti Endpoint 3, 4, 5, dst bisa ditambahkan di bawah sini...
-
-
 
 app.listen(port, () => {
-    console.log(`Server jalan di port ${port}`);
+    // Teks ini yang bakal muncul kalau server berhasil nyala
+    console.log(`🚀 Berhasil di run! Server jalan di port ${port}`);
 });
