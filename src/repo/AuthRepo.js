@@ -2,6 +2,7 @@ const { sql, getConnection } = require('../config/db');
 const UserModel = require('../model/UserModel');
 
 class AuthRepo {
+
     static async registerUserInDB(fullName, password, email, phoneNumber) {
         try {
             const pool = await getConnection();

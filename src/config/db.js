@@ -1,7 +1,7 @@
 const sql = require('mssql/msnodesqlv8');
 
 const config = {
-    server: '.', // Pake titik (.) biar langsung lewat jalur VIP kayak SSMS
+    server: '.', 
     database: 'TaskWeaverDB',
     driver: 'msnodesqlv8',
     options: {
@@ -10,16 +10,22 @@ const config = {
     }
 };
 
-async function connectDB() {
-    console.log('⏳ Nyoba dobrak pintu pake jalur VIP (.) ...');
+let pool; // Variabel untuk menyimpan koneksi biar nggak buka-tutup terus
+
+// Fungsi ini yang akan dipanggil oleh Repo nanti
+async function getConnection() {
     try {
-        const pool = await sql.connect(config);
-        console.log('✅ ANJAY TEMBUS! Database terhubung bos!');
+        // Kalau belum terhubung, hubungkan. Kalau sudah, pakai yang ada.
+        if (!pool) {
+            pool = await sql.connect(config);
+            console.log('✅ PINTU DATABASE DIBUKA OLEH CONFIG!');
+        }
         return pool;
     } catch (err) {
         console.error('❌ GAGAL MASUK:', err.message);
+        throw err;
     }
 }
 
-module.exports = connectDB;
-
+// Ekspor alatnya (sql) dan kunci pintunya (getConnection)
+module.exports = { sql, getConnection };

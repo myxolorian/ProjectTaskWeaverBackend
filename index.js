@@ -19,7 +19,10 @@ connectDB();
 // ----------------------------------------------------
 
 // 🚀 ENDPOINT AUTHENTICATION (DUWAMISH / N-TIER)
+app.post('/api/register', AuthController.register);
 app.post('/api/login', AuthController.login);
+
+
 
 
 // 🛠️ ENDPOINT TEST BAWAAN LU (Biarin aja buat nge-test)

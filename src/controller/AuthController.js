@@ -2,6 +2,31 @@ const AuthService = require('../service/AuthService');
 
 class AuthController {
    
+    static async register(req, res) {
+        // Tangkap data dari frontend
+        const { fullName, password, email, phoneNumber } = req.body;
+
+        try {
+            // Panggil Service
+            const result = await AuthService.register(fullName, password, email, phoneNumber);
+
+            // Evaluasi balasan dari Service
+            if (result.isSuccess) {
+                res.status(201).json({
+                    status: "sukses",
+                    pesan: result.pesan
+                });
+            } else {
+                res.status(400).json({
+                    status: "gagal",
+                    pesan: result.pesan
+                });
+            }
+        } catch (err) {
+            console.error("❌ Error di Controller (Register):", err.message);
+            res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
+        }
+    }
 
     static async login(req, res) {
         const { email, password } = req.body;
