@@ -1,5 +1,5 @@
 const express = require('express');
-const connectDB = require('./src/config/db.js');
+const { getConnection } = require('./src/config/db.js');
 const sql = require('mssql/msnodesqlv8');
 
 // 🔥 1. IMPORT CONTROLLER YANG UDAH KITA BIKIN
@@ -12,8 +12,7 @@ const port = 3000;
 app.use(express.json());
 
 // Jalankan fungsi koneksi database
-connectDB();
-
+getConnection();
 // ----------------------------------------------------
 // DAFTAR ENDPOINT / API
 // ----------------------------------------------------
