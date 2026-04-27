@@ -1,9 +1,7 @@
 const { sql, getConnection } = require('../config/db');
-const UserModel = require('../model/UserModel'); // Wajib panggil cetakan Model lu
+const UserModel = require('../model/UserModel');
 
 class AuthRepo {
-
-   
     static async registerUserInDB(fullName, password, email, phoneNumber) {
         try {
             const pool = await getConnection();
@@ -15,7 +13,6 @@ class AuthRepo {
             request.input('PhoneNumber', sql.VarChar(20), phoneNumber || null);
 
             const result = await request.execute('RegisterUser');
-
             const responsDariSP = result.recordset[0];
 
             return {
@@ -28,7 +25,6 @@ class AuthRepo {
         }
     }
 
-   
     static async loginUserInDB(email, password) {
         try {
             const pool = await getConnection();
@@ -45,11 +41,12 @@ class AuthRepo {
             if (flag === 1 && result.recordset.length > 0) {
                 const dataMentah = result.recordset[0];
 
+                // Panggil cetakan UserModel buatan lu
                 userData = new UserModel();
-
-                userData.id = dataMentah.UserID;
-                userData.email = dataMentah.UserEmail;
-                userData.statusLogin = dataMentah.StatusLogin;
+                userData.fillFromDb(dataMentah);
+                userData.UserFullName = dataMentah.UserFullName;
+                userData.UserPhoneNumber = dataMentah.UserPhoneNumber;
+                // this.Password otomatis null dari konstruktor, aman!
             }
 
             return {

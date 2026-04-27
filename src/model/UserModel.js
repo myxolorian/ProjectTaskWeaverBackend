@@ -5,6 +5,7 @@ class UserModel {
         this.UserFullName = null;
         this.UserEmail = null;
         this.UserPhoneNumber = null;
+        this.UserID = null;
     }
 
     fillFromDb(row) {
