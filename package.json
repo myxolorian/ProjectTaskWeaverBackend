@@ -10,8 +10,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@supabase/supabase-js": "^2.105.4",
     "express": "^5.2.1",
     "msnodesqlv8": "^5.1.9",
-    "mssql": "^12.5.0"
+    "mssql": "^12.5.0",
+    "pg": "^8.20.0",
+    "postgres": "^3.4.9"
   }
 }

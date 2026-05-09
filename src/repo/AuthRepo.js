@@ -1,24 +1,20 @@
-const { sql, getConnection } = require('../config/db');
+const { pool } = require('../config/db'); // Pastikan ngambil pool dari db.js lu yang baru
 const UserModel = require('../model/UserModel');
 
 class AuthRepo {
 
     static async registerUserInDB(fullName, password, email, phoneNumber) {
         try {
-            const pool = await getConnection();
-            const request = pool.request();
+            const query = `SELECT status, message FROM register_user($1, $2, $3, $4)`;
+            const values = [fullName, password, email, phoneNumber || null];
 
-            request.input('FullName', sql.VarChar(100), fullName);
-            request.input('Password', sql.VarChar(100), password);
-            request.input('Email', sql.VarChar(50), email);
-            request.input('PhoneNumber', sql.VarChar(20), phoneNumber || null);
+            const result = await pool.query(query, values);
 
-            const result = await request.execute('RegisterUser');
-            const responsDariSP = result.recordset[0];
+            const responsDariSP = result.rows[0];
 
             return {
-                status: responsDariSP.Status,
-                pesan: responsDariSP.Message
+                status: responsDariSP.status, 
+                pesan: responsDariSP.message
             };
         } catch (err) {
             console.error("❌ Error di Repo (Register):", err.message);
@@ -28,30 +24,24 @@ class AuthRepo {
 
     static async loginUserInDB(email, password) {
         try {
-            const pool = await getConnection();
-            const request = pool.request();
+            const query = `SELECT user_id, user_email, user_full_name, user_phone_number FROM login_user($1, $2)`;
+            const values = [email, password];
 
-            request.input('Email', sql.VarChar(50), email);
-            request.input('Password', sql.VarChar(100), password);
+            const result = await pool.query(query, values);
 
-            const result = await request.execute('LoginUser');
-
-            const flag = result.returnValue;
             let userData = null;
 
-            if (flag === 1 && result.recordset.length > 0) {
-                const dataMentah = result.recordset[0];
+            const isSuccess = result.rows.length > 0;
 
-                // Panggil cetakan UserModel buatan lu
+            if (isSuccess) {
+                const dataMentah = result.rows[0];
+
                 userData = new UserModel();
                 userData.fillFromDb(dataMentah);
-                userData.UserFullName = dataMentah.UserFullName;
-                userData.UserPhoneNumber = dataMentah.UserPhoneNumber;
-                // this.Password otomatis null dari konstruktor, aman!
             }
 
             return {
-                isSuccess: flag === 1,
+                isSuccess: isSuccess,
                 data: userData
             };
         } catch (err) {

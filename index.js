@@ -1,62 +1,35 @@
 const express = require('express');
 const { getConnection } = require('./src/config/db.js');
-const sql = require('mssql/msnodesqlv8');
 
-// 🔥 1. IMPORT CONTROLLER YANG UDAH KITA BIKIN
+// 🔥 1. IMPORT CONTROLLER AUTH
 const AuthController = require('./src/controller/AuthController');
 
 const app = express();
 const port = 3000;
 
-// 🔥 2. WAJIB ADA: Biar Express bisa ngebaca data JSON dari Postman / Frontend
+// 🔥 2. MIDDLEWARE WAJIB: Biar bisa baca JSON dari Postman
 app.use(express.json());
 
-// Jalankan fungsi koneksi database
+// 🔥 3. TEST KONEKSI KE SUPABASE
+// Ini bakal manggil fungsi di db.js buat mastiin pintu database kebuka
 getConnection();
+
 // ----------------------------------------------------
 // DAFTAR ENDPOINT / API
 // ----------------------------------------------------
 
-// 🚀 ENDPOINT AUTHENTICATION (DUWAMISH / N-TIER)
+// 🚀 ROUTE AUTH (Udah pake arsitektur Duwamish/N-Tier)
 app.post('/api/register', AuthController.register);
 app.post('/api/login', AuthController.login);
 
-
-
-
-// 🛠️ ENDPOINT TEST BAWAAN LU (Biarin aja buat nge-test)
+// 🛠️ ROUTE TESTING
 app.get('/', (req, res) => {
-    res.send('Backend TaskWeaver berjalan!');
+    res.send('Backend TaskWeaver (Supabase Version) berjalan!');
 });
-
-//app.get('/api/test-data', (req, res) => {
-//    res.json({
-//        status: "sukses",
-//        pesan: "Backend berhasil merespons!",
-//        data: [
-//            { id: 1, nama_tugas: "Belajar Node.js" },
-//            { id: 2, nama_tugas: "Koneksi Database" }
-//        ]
-//    });
-//});
-
-// Catatan: Endpoint ini masih nembak DB langsung. 
-// Nanti kalau ada waktu lu bisa rapihin ini pindahin ke TaskController & TaskRepo ya!
-//app.get('/api/tasks', async (req, res) => {
-//    try {
-//        const result = await sql.query('SELECT * FROM trTask');
-//        res.json({
-//            status: "sukses",
-//            data: result.recordset
-//        });
-//    } catch (err) {
-//        console.error(err);
-//        res.status(500).json({ pesan: "Terjadi kesalahan pada server" });
-//    }
-//});
 
 // ----------------------------------------------------
 
 app.listen(port, () => {
-    console.log(`🚀 Berhasil di run! Server jalan di port ${port}`);
+    console.log(`🚀 Server TaskWeaver jalan di port ${port}`);
+    console.log(`🔗 Coba akses: http://localhost:${port}`);
 });
