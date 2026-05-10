@@ -40,7 +40,46 @@ class GroupService {
         }
     }
 
+    static async KickGroup(group_id, user_id, requester_user_id) {
+        if (!group_id || !user_id || !requester_user_id) {
+            return { isSuccess: false, pesan: 'ID grup, ID Pengguna, dan ID Peminta wajib diisi!' };
+        }
 
+        try {
+            const result = await GroupRepo.KickGroup(group_id, user_id, requester_user_id);
+            if (result.status === 'Success') {
+                return { isSuccess: true, pesan: result.pesan };
+            } else {
+                return { isSuccess: false, pesan: result.pesan };
+            }
+        } catch (err) {
+            console.error("Error di Service Group:", err.message);
+            throw err;
+        }
+    }
+
+    static async GetGroup(group_id) {
+        try {
+            const data = await GroupRepo.GetGroup(group_id);
+
+            return { isSuccess: true, data: data };
+        } catch (err) {
+            console.error("Error di Service Group:", err.message);
+            throw err;
+        }
+    }
+
+
+    static async GetMember(group_id) {
+        try {
+            const data = await GroupRepo.GetMember(group_id);
+
+            return { isSuccess: true, data: data };
+        } catch (err) {
+            console.error("Error di Service Group:", err.message);
+            throw err;
+        }
+    }
 
 
 

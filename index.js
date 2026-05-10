@@ -15,8 +15,14 @@ getConnection();
 
 app.post('/api/register', AuthController.register);
 app.post('/api/login', AuthController.login);
+
+
+///GROUP
 app.post('/api/groupCreate', GroupController.InsertGroup);
 app.post('/api/groupJoin', GroupController.JoinGroup);
+app.post('/api/groupKick', GroupController.KickGroup);  
+app.post('/api/groupGet', GroupController.GetGroup);
+app.post('/api/groupGetMember', GroupController.GetMember);
 app.post('/api/taskCreate', TaskController.InsertTask);
 app.post('/api/taskUpdate', TaskController.UpdateTask);
 app.post('/api/taskDelete', TaskController.DeleteTask);
