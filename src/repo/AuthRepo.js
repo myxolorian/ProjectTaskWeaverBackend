@@ -1,4 +1,4 @@
-const { pool } = require('../config/db'); // Pastikan ngambil pool dari db.js lu yang baru
+const { pool } = require('../config/db'); 
 const UserModel = require('../model/UserModel');
 
 class AuthRepo {
@@ -17,7 +17,7 @@ class AuthRepo {
                 pesan: responsDariSP.message
             };
         } catch (err) {
-            console.error("❌ Error di Repo (Register):", err.message);
+            console.error("Error di Repo (Register):", err.message);
             throw err;
         }
     }
@@ -45,7 +45,7 @@ class AuthRepo {
                 data: userData
             };
         } catch (err) {
-            console.error("❌ Error di Repo (Login):", err.message);
+            console.error("Error di Repo (Login):", err.message);
             throw err;
         }
     }

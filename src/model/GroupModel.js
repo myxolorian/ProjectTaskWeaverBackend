@@ -1,0 +1,17 @@
+class GroupModel {
+    //data disini sesuai dengan di database, jadi harus sesuai dengan yang di select di repo
+
+
+    constructor() {
+        this.group_id = null;
+        this.group_name = null;
+    }
+
+    fillFromDb(row) {
+        if (!row) return;
+        this.group_id = row.group_id;
+        this.group_name = row.group_name;
+    }
+}
+
+module.exports = GroupModel;

@@ -11,7 +11,6 @@ class UserModel {
     fillFromDb(row) {
         if (!row) return;
 
-        // 🔥 Mapping dari output snake_case PostgreSQL ke PascalCase Model lu
         this.UserID = row.user_id;
         this.UserEmail = row.user_email;
         this.UserFullName = row.user_full_name;

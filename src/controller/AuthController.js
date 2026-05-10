@@ -3,14 +3,11 @@ const AuthService = require('../service/AuthService');
 class AuthController {
    
     static async register(req, res) {
-        // Tangkap data dari frontend
         const { fullName, password, email, phoneNumber } = req.body;
 
         try {
-            // Panggil Service
             const result = await AuthService.register(fullName, password, email, phoneNumber);
 
-            // Evaluasi balasan dari Service
             if (result.isSuccess) {
                 res.status(201).json({
                     status: "sukses",
@@ -32,15 +29,14 @@ class AuthController {
         const { email, password } = req.body;
 
         try {
-            // Panggil Service
+           
             const result = await AuthService.login(email, password);
 
-            // Evaluasi balasan dari Service
             if (result.isSuccess) {
                 res.json({
                     status: "sukses",
                     pesan: result.pesan,
-                    data: result.data // Ini isinya UserModel yang udah rapi!
+                    data: result.data 
                 });
             } else {
                 res.status(401).json({
