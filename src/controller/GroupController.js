@@ -25,7 +25,6 @@ class GroupController {
         }
     }
 
-
     static async JoinGroup(req, res) {
         const { group_id, user_id, user_role } = req.body; // pastikan body nya sesuai dengan ini ya, jadi group_id, user_id, dan user_role_id harus ada di body
 
@@ -46,8 +45,6 @@ class GroupController {
             console.error("Error di Controller (Group):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
-
-
     }
 
     static async KickGroup(req, res) {
@@ -71,7 +68,6 @@ class GroupController {
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
-
 
     static async GetGroup(req, res) {
         const { group_id } = req.body;
@@ -103,7 +99,6 @@ class GroupController {
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
-
 
 }
 

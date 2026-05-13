@@ -17,7 +17,7 @@ app.post('/api/register', AuthController.register);
 app.post('/api/login', AuthController.login);
 
 
-///GROUP
+//GROUP
 app.post('/api/groupCreate', GroupController.InsertGroup);
 app.post('/api/groupJoin', GroupController.JoinGroup);
 app.post('/api/groupKick', GroupController.KickGroup);  
@@ -26,6 +26,10 @@ app.post('/api/groupGetMember', GroupController.GetMember);
 app.post('/api/taskCreate', TaskController.InsertTask);
 app.post('/api/taskUpdate', TaskController.UpdateTask);
 app.post('/api/taskDelete', TaskController.DeleteTask);
+
+
+
+
 
 app.get('/', (req, res) => {
     res.send('Backend TaskWeaver (Supabase Version) berjalan!');
