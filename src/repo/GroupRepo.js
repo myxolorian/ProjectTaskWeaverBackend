@@ -3,10 +3,10 @@ const UserModel = require('../model/GroupModel');
 
 class GroupRepo {
 
-    static async InsertGroup(groupName, userId) {
+    static async InsertGroup(groupName, userId, invite_code) {
         try {
-            const query = `SELECT status, message FROM insert_group($1, $2)`;
-            const values = [groupName, userId ];
+            const query = `SELECT status, message FROM insert_group($1, $2, $3)`;
+            const values = [groupName, userId, invite_code];
 
             const result = await pool.query(query, values);
 
@@ -84,6 +84,35 @@ class GroupRepo {
 
             const query = `SELECT * FROM get_enrollment($1)`;
             const result = await pool.query(query, [finalGroupId]);
+
+            return result.rows;
+        } catch (err) {
+            console.error("Error di Repo Group", err.message);
+            throw err;
+        }
+    }
+
+    static async GetInviteCode(group_id) {
+        try {
+            const finalGroupId = group_id || null;
+
+            const query = `SELECT * FROM get_group_invite_code($1)`;
+            const result = await pool.query(query, [finalGroupId]);
+
+            return result.rows;
+        } catch (err) {
+            console.error("Error di Repo Group", err.message);
+            throw err;
+        }
+    }
+
+
+    static async GetGroupbyInviteCode(invite_code) {
+        try {
+            const finalInviteCode = invite_code || null;
+
+            const query = `SELECT * FROM get_group_by_invite_code($1)`;
+            const result = await pool.query(query, [finalInviteCode]);
 
             return result.rows;
         } catch (err) {

@@ -23,6 +23,10 @@ app.post('/api/groupJoin', GroupController.JoinGroup);
 app.post('/api/groupKick', GroupController.KickGroup);  
 app.post('/api/groupGet', GroupController.GetGroup);
 app.post('/api/groupGetMember', GroupController.GetMember);
+app.post('/api/groupGetInviteCode', GroupController.GetInviteCode);
+app.post('/api/groupGetGroupbyInviteCode', GroupController.GetGroupbyInviteCode);
+
+//TASK
 app.post('/api/taskCreate', TaskController.InsertTask);
 app.post('/api/taskUpdate', TaskController.UpdateTask);
 app.post('/api/taskDelete', TaskController.DeleteTask);

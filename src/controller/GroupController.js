@@ -100,6 +100,39 @@ class GroupController {
         }
     }
 
+    static async GetGroupbyInviteCode(req, res) {
+        const { invite_code } = req.body;
+
+        try {
+            const result = await GroupService.GetGroupbyInviteCode(invite_code);
+            res.status(200).json({
+                status: "sukses",
+                data: result.data
+            });
+        } catch (err) {
+            console.error("Error di Controller (Group):", err.message);
+            res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
+        }
+    }
+
+
+    static async GetInviteCode(req, res) {
+        const { group_id } = req.body;
+
+        try {
+            const result = await GroupService.GetInviteCode(group_id);
+            res.status(200).json({
+                status: "sukses",
+                data: result.data
+            });
+        } catch (err) {
+            console.error("Error di Controller (Group):", err.message);
+            res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
+        }
+    }
+
+    //flow = user insert invite code -> get group id by invite code -> join group by group id
+
 }
 
 module.exports = GroupController;

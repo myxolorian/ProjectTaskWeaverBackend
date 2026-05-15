@@ -1,5 +1,5 @@
 const GroupRepo = require('../repo/GroupRepo');
-
+const crypto = require('crypto');
 class GroupService {
 
     static async InsertGroup(groupName, userId) {
@@ -8,7 +8,9 @@ class GroupService {
         }
 
         try {
-            const result = await GroupRepo.InsertGroup(groupName, userId);
+            const invite_code = crypto.randomBytes(3).toString('hex').toUpperCase(); 
+
+            const result = await GroupRepo.InsertGroup(groupName, userId, invite_code);
 
             if (result.status === 'Success') {
                 return { isSuccess: true, pesan: result.pesan };
@@ -81,7 +83,30 @@ class GroupService {
         }
     }
 
+    static async GetInviteCode(group_id) {
+        try {
+            const data = await GroupRepo.GetInviteCode(group_id);
 
+            return { isSuccess: true, data: data };
+        } catch (err) {
+            console.error("Error di Service Group:", err.message);
+            throw err;
+        }
+
+    }
+
+
+    static async GetGroupbyInviteCode(invite_code) {
+        try {
+            const data = await GroupRepo.GetGroupbyInviteCode(invite_code);
+
+            return { isSuccess: true, data: data };
+        } catch (err) {
+            console.error("Error di Service Group:", err.message);
+            throw err;
+        }
+
+    }
 
 }
 
