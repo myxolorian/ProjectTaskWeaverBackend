@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const { getConnection } = require('./src/config/db.js');
 
 const AuthController = require('./src/controller/AuthController'); 
@@ -8,11 +9,17 @@ const TaskController = require('./src/controller/TaskController');
 const app = express();
 const port = 3000;
 
+app.use(cors({
+  origin: 'http://localhost:5173', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
+
 app.use(express.json());
 
 getConnection();
 
-
+// AUTH 
 app.post('/api/register', AuthController.register);
 app.post('/api/login', AuthController.login);
 
