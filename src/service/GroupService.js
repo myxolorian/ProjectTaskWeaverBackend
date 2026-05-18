@@ -2,7 +2,7 @@ const GroupRepo = require('../repo/GroupRepo');
 const crypto = require('crypto');
 class GroupService {
 
-    static async InsertGroup(groupName, userId) {
+    static async InsertGroup(groupName, userId, group_description) {
         if (!groupName || !userId) {
             return { isSuccess: false, pesan: 'Nama Grup dan ID Pengguna wajib diisi!' };
         }
@@ -10,7 +10,7 @@ class GroupService {
         try {
             const invite_code = crypto.randomBytes(3).toString('hex').toUpperCase(); 
 
-            const result = await GroupRepo.InsertGroup(groupName, userId, invite_code);
+            const result = await GroupRepo.InsertGroup(groupName, userId, invite_code, group_description);
 
             if (result.status === 'Success') {
                 return { isSuccess: true, pesan: result.pesan };

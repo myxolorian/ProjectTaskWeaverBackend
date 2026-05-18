@@ -3,10 +3,10 @@ const UserModel = require('../model/GroupModel');
 
 class GroupRepo {
 
-    static async InsertGroup(groupName, userId, invite_code) {
+    static async InsertGroup(groupName, userId, invite_code, group_description) {
         try {
-            const query = `SELECT status, message FROM insert_group($1, $2, $3)`;
-            const values = [groupName, userId, invite_code];
+            const query = `SELECT status, message FROM insert_group($1, $2, $3, $4)`;
+            const values = [groupName, userId, invite_code, group_description];
 
             const result = await pool.query(query, values);
 
