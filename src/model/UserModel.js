@@ -6,6 +6,7 @@ class UserModel {
         this.UserEmail = null;
         this.UserPhoneNumber = null;
         this.UserID = null;
+        this.user_skill = null;
     }
 
     fillFromDb(row) {
@@ -15,7 +16,10 @@ class UserModel {
         this.UserEmail = row.user_email;
         this.UserFullName = row.user_full_name;
         this.UserPhoneNumber = row.user_phone_number;
+        this.user_skill = row.user_skill;
     }
 }
 
 module.exports = UserModel;
+
+//user update password dan user-skill

@@ -1,16 +1,18 @@
 const express = require('express');
 const cors = require('cors');
-const { getConnection } = require('./src/config/db.js');
-
+const { getConnection } = require('./src/config/db.js'); 
+const frontEndUrl = 'http://localhost:5173'; // Ganti dengan URL frontend Anda
 const AuthController = require('./src/controller/AuthController'); 
 const GroupController = require('./src/controller/GroupController');// tambahin disini setiap kali buat controller baru
 const TaskController = require('./src/controller/TaskController');
+const ChannelController = require('./src/controller/ChannelController');
+
 
 const app = express();
 const port = 3000;
 
 app.use(cors({
-  origin: 'http://localhost:5173', 
+  origin: frontEndUrl, 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
@@ -38,7 +40,8 @@ app.post('/api/taskCreate', TaskController.InsertTask);
 app.post('/api/taskUpdate', TaskController.UpdateTask);
 app.post('/api/taskDelete', TaskController.DeleteTask);
 
-
+//Channel
+app.post('/api/channelCreate', ChannelController.createChannel);
 
 
 
