@@ -6,7 +6,7 @@ const AuthController = require('./src/controller/AuthController');
 const GroupController = require('./src/controller/GroupController');// tambahin disini setiap kali buat controller baru
 const TaskController = require('./src/controller/TaskController');
 const ChannelController = require('./src/controller/ChannelController');
-
+const ChatController = require('./src/controller/ChatController');
 
 const app = express();
 const port = 3000;
@@ -42,6 +42,10 @@ app.post('/api/taskDelete', TaskController.DeleteTask);
 
 //Channel
 app.post('/api/channelCreate', ChannelController.createChannel);
+
+
+//Chat
+app.post('/api/chatSend', ChatController.sendChat);
 
 
 
