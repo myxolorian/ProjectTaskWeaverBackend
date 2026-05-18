@@ -3,10 +3,10 @@ const GroupService = require('../service/GroupService');
 class GroupController {
 
     static async InsertGroup(req, res) {
-		const { group_name, user_id , group_description} = req.body; // kalau mau test  postman, pastikan body nya sesuai dengan ini ya, jadi group_name dan user_id harus ada di body
+		const { group_name, user_id , group_description, invite_code} = req.body; // kalau mau test  postman, pastikan body nya sesuai dengan ini ya, jadi group_name dan user_id harus ada di body
 
         try {
-            const result = await GroupService.InsertGroup(group_name, user_id, group_description);
+            const result = await GroupService.InsertGroup(group_name, user_id, group_description, invite_code);
 
             if (result.isSuccess) {
                 res.status(201).json({
