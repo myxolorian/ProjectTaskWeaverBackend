@@ -98,9 +98,9 @@ class GroupService {
 
     static async GetGroupbyInviteCode(invite_code) {
         try {
-            const data = await GroupRepo.GetGroupbyInviteCode(invite_code);
+            const result = await GroupRepo.GetGroupbyInviteCode(invite_code);
 
-            return { isSuccess: true, data: data };
+            return result;
         } catch (err) {
             console.error("Error di Service Group:", err.message);
             throw err;

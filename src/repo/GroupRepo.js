@@ -1,5 +1,5 @@
 const { pool } = require('../config/db');
-const UserModel = require('../model/GroupModel');
+const GroupModel = require('../model/GroupModel');
 
 class GroupRepo {
 
@@ -114,7 +114,23 @@ class GroupRepo {
             const query = `SELECT * FROM get_group_by_invite_code($1)`;
             const result = await pool.query(query, [finalInviteCode]);
 
-            return result.rows;
+
+            let groupData = null;
+
+            const isSuccess = result.rows.length > 0;
+
+            if (isSuccess) {
+                const dataMentah = result.rows[0];
+
+                groupData = new GroupModel();
+                groupData.fillFromDb(dataMentah);
+            }
+
+
+            return {
+                isSuccess: isSuccess,
+                data: groupData 
+            };
         } catch (err) {
             console.error("Error di Repo Group", err.message);
             throw err;

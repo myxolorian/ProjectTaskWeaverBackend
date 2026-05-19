@@ -105,10 +105,19 @@ class GroupController {
 
         try {
             const result = await GroupService.GetGroupbyInviteCode(invite_code);
-            res.status(200).json({
+            if(result.isSuccess)
+            {
+                res.status(200).json({
                 status: "sukses",
                 data: result.data
             });
+            }else {
+                res.status(404).json({
+                    status: "gagal",
+                    pesan: "Invite Code tidak valid atau grup tidak ditemukan"
+                });
+            }
+           
         } catch (err) {
             console.error("Error di Controller (Group):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
