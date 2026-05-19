@@ -137,6 +137,46 @@ class GroupRepo {
         }
     }
 
+    static async GetGroupByUserID(user_id) {
+        try {
+            const finalUserId = user_id || null;
+
+            const query = `SELECT * FROM get_group_by_user_id($1)`;
+            const result = await pool.query(query, [finalUserId]);
+
+
+            let groupList = [];
+
+            const isSuccess = result.rows.length > 0;
+
+            if (isSuccess) {
+
+                groupList = result.rows.map(dataMentah => {
+                    const groupData = new GroupModel();
+                    groupData.fillFromDb(dataMentah);
+                    return groupData;
+                });
+            }
+
+
+            return {
+                isSuccess: isSuccess,
+                data: groupList
+            };
+        } catch (err) {
+            console.error("Error di Repo Group", err.message);
+            throw err;
+        }
+    }
+
+
+
+
+
+
+
+
+
 
 }
 

@@ -142,6 +142,33 @@ class GroupController {
 
     //flow = user insert invite code -> get group id by invite code -> join group by group id
 
+    static async GetGroupByUserID(req, res) {
+        const { user_id } = req.body;
+
+        try {
+            const result = await GroupService.GetGroupByUserID(user_id);
+            if (result.isSuccess) {
+                res.status(200).json({
+                    status: "sukses",
+                    data: result.data
+                });
+            } else {
+                res.status(404).json({
+                    status: "gagal",
+                    pesan: "User tidak bergabung di group"
+                });
+            }
+
+        } catch (err) {
+            console.error("Error di Controller (Group):", err.message);
+            res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
+        }
+    }
+
+
+
+
+
 }
 
 module.exports = GroupController;

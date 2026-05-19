@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { getConnection } = require('./src/config/db.js'); 
-const frontEndUrl = 'http://localhost:5173'; // Ganti dengan URL frontend Anda
+const frontEndUrl = 'http://localhost:5173'; 
 const AuthController = require('./src/controller/AuthController'); 
 const GroupController = require('./src/controller/GroupController');// tambahin disini setiap kali buat controller baru
 const TaskController = require('./src/controller/TaskController');
@@ -34,6 +34,9 @@ app.post('/api/groupGet', GroupController.GetGroup);
 app.post('/api/groupGetMember', GroupController.GetMember);
 app.post('/api/groupGetInviteCode', GroupController.GetInviteCode);
 app.post('/api/groupGetGroupbyInviteCode', GroupController.GetGroupbyInviteCode);
+app.post('/api/groupGetGroupByUserId', GroupController.GetGroupByUserID)
+
+
 
 //TASK
 app.post('/api/taskCreate', TaskController.InsertTask);
