@@ -42,6 +42,10 @@
     app.post('/api/taskCreate', TaskController.InsertTask);
     app.post('/api/taskUpdate', TaskController.UpdateTask);
     app.post('/api/taskDelete', TaskController.DeleteTask);
+    app.post('/api/taskUpdateStatus', TaskController.UpdateTaskStatus);
+    app.post('/api/taskGetByGroup', TaskController.GetTasksByGroup);
+    app.post('/api/taskGetById', TaskController.GetTaskById);
+    app.post('/api/taskGetByUser', TaskController.GetTasksByUser);
 
     //Channel
     app.post('/api/channelCreate', ChannelController.createChannel);
