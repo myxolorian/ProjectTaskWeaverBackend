@@ -1,6 +1,6 @@
 const { pool } = require('../config/db');
 const GroupModel = require('../model/GroupModel');
-
+const UserModel = require('../model/UserModel');
 class GroupRepo {
 
     static async InsertGroup(groupName, userId, invite_code, group_description) {
@@ -78,13 +78,12 @@ class GroupRepo {
     }
 
 
-    static async GetMember(group_id) {
+    static async GetMember(group_id) { ////////////////////////\\\\\\\\\\\\//////\\\\\\\\////\/\/\//\//\//\/\/\///\//\///\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
         try {
             const finalGroupId = group_id || null;
 
             const query = `SELECT * FROM get_enrollment($1)`;
             const result = await pool.query(query, [finalGroupId]);
-
             return result.rows;
         } catch (err) {
             console.error("Error di Repo Group", err.message);
@@ -170,8 +169,41 @@ class GroupRepo {
     }
 
 
+    static async DeleteGroup(group_id, user_id) {
+        try {
+            const query = `SELECT status, message FROM delete_group($1, $2)`;
+            const values = [group_id, user_id];
 
+            const result = await pool.query(query, values);
+            const responsDariSP = result.rows[0];
 
+            return {
+                status: responsDariSP.status,
+                pesan: responsDariSP.message
+            };
+        } catch (err) {
+            console.error("Error di Repo Group", err.message);
+            throw err;
+        }
+    }
+
+    static async UpdateGroup(group_id, user_id, group_name, group_description) {
+        try {
+            const query = `SELECT status, message FROM update_group($1, $2, $3, $4)`;
+            const values = [group_id, user_id, group_name, group_description];
+
+            const result = await pool.query(query, values);
+            const responsDariSP = result.rows[0];
+
+            return {
+                status: responsDariSP.status,
+                pesan: responsDariSP.message
+            };
+        } catch (err) {
+            console.error("Error di Repo Group (UpdateGroup):", err.message);
+            throw err;
+        }
+    }
 
 
 

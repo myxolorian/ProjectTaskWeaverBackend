@@ -166,9 +166,45 @@ class GroupController {
     }
 
 
+    static async DeleteGroup(req, res) {
+        const { group_id, user_requester_id } = req.body; // pastikan body nya sesuai dengan ini ya, jadi group_id, user_id, dan user_role_id harus ada di body
 
+        try {
+            const result = await GroupService.DeleteGroup(group_id, user_requester_id);
+            if (result.isSuccess) {
+                res.status(201).json({
+                    status: "sukses",
+                    pesan: result.pesan
+                });
+            } else {
+                res.status(400).json({
+                    status: "gagal",
+                    pesan: result.pesan
+                });
+            }
+        } catch (err) {
+            console.error("Error di Controller (Group):", err.message);
+            res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
+        }
+    }
+
+
+    static async UpdateGroup(req, res) {
+        const { group_id, user_id, group_name, group_description } = req.body;
+
+        try {
+            const result = await GroupService.UpdateGroup(group_id, user_id, group_name, group_description);
+            if (result.isSuccess) {
+                res.status(200).json({ status: "sukses", pesan: result.pesan });
+            } else {
+                res.status(400).json({ status: "gagal", pesan: result.pesan });
+            }
+        } catch (err) {
+            console.error("Error di Controller (Group):", err.message);
+            res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
+        }
+    }
 
 
 }
-
 module.exports = GroupController;

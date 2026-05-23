@@ -49,6 +49,62 @@ class AuthRepo {
             throw err;
         }
     }
+
+    static async UpdatePassword(user_id, old_password, new_password) {
+        try {
+            const query = `SELECT status, message FROM update_user_password($1, $2, $3)`;
+            const values = [user_id, old_password, new_password];
+
+            const result = await pool.query(query, values);
+            const responsDariSP = result.rows[0];
+
+            return {
+                status: responsDariSP.status,
+                pesan: responsDariSP.message
+            };
+        } catch (err) {
+            console.error("Error di Repo User", err.message);
+            throw err;
+        }
+    }
+
+
+    static async InsertUpdateUserSkill(user_id, user_skill) {
+        try {
+            const query = `SELECT status, message FROM insert_user_skill($1, $2)`;
+            const values = [user_id, user_skill];
+
+            const result = await pool.query(query, values);
+            const responsDariSP = result.rows[0];
+
+            return {
+                status: responsDariSP.status,
+                pesan: responsDariSP.message
+            };
+        } catch (err) {
+            console.error("Error di Repo User", err.message);
+            throw err;
+        }
+    }
+
+    static async GetSkill(user_id) {
+        try {
+            const result = await pool.query(`SELECT status, message, user_skill FROM get_user_skill($1)`, [user_id]);
+            const responsDariSP = result.rows[0];
+
+            return {
+                status: responsDariSP.status,
+                pesan: responsDariSP.message,
+                user_skill: responsDariSP.user_skill
+            };
+        } catch (err) {
+            console.error("Error di Repo User", err.message);
+            throw err;
+        }
+    }
+
+
+
 }
 
 module.exports = AuthRepo;

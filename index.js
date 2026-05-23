@@ -3,7 +3,7 @@
     const { getConnection } = require('./src/config/db.js'); 
     const frontEndUrl = 'http://localhost:5173'; 
     const AuthController = require('./src/controller/AuthController'); 
-    const GroupController = require('./src/controller/GroupController');// tambahin disini setiap kali buat controller baru
+    const GroupController = require('./src/controller/GroupController'); // tambahin disini setiap kali buat controller baru
     const TaskController = require('./src/controller/TaskController');
     const ChannelController = require('./src/controller/ChannelController');
     const ChatController = require('./src/controller/ChatController');
@@ -21,11 +21,12 @@
 
     getConnection();
 
-    // AUTH 
+    // User 
     app.post('/api/register', AuthController.register);
     app.post('/api/login', AuthController.login);
-
-
+    app.post('/api/userUISkill', AuthController.InsertUpdateUserSkill); 
+    app.post('/api/userUpdatePassword', AuthController.UpdatePassword); 
+    app.post('/api/userGetSkill', AuthController.GetSkill); 
     //GROUP
     app.post('/api/groupCreate', GroupController.InsertGroup);
     app.post('/api/groupJoin', GroupController.JoinGroup);
@@ -34,8 +35,9 @@
     app.post('/api/groupGetMember', GroupController.GetMember);
     app.post('/api/groupGetInviteCode', GroupController.GetInviteCode);
     app.post('/api/groupGetGroupbyInviteCode', GroupController.GetGroupbyInviteCode);
-    app.post('/api/groupGetGroupByUserId', GroupController.GetGroupByUserID)
-
+    app.post('/api/groupGetGroupByUserId', GroupController.GetGroupByUserID);
+    app.post('/api/groupDelete', GroupController.DeleteGroup);
+    app.post('/api/groupUpdate', GroupController.UpdateGroup); 
 
 
     //TASK
@@ -47,14 +49,20 @@
     app.post('/api/taskGetById', TaskController.GetTaskById);
     app.post('/api/taskGetByUser', TaskController.GetTasksByUser);
 
-    //Channel
+
+    //CHANNEL
     app.post('/api/channelCreate', ChannelController.createChannel);
+    app.post('/api/channelGetByGroup', ChannelController.GetChannelByGroupId); 
+    app.post('/api/channelDelete', ChannelController.DeleteChannel); 
+    app.post('/api/channelUpdate', ChannelController.UpdateChannel); 
 
 
-    //Chat
+    //CHAT
     app.post('/api/chatSend', ChatController.sendChat);
-
-
+    //getChat by channel id and group id
+    //delete chat by chat id
+    //update chat by chat id, ini opsional lah ya
+   
 
     app.get('/', (req, res) => {
         res.send('Backend TaskWeaver (Supabase Version) berjalan!');

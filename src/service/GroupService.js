@@ -122,6 +122,43 @@
 
         }
 
+
+        static async DeleteGroup(group_id, requester_user_id) {
+            if (!group_id  || !requester_user_id) {
+                return { isSuccess: false, pesan: 'ID grup, dan ID Peminta wajib diisi!' };
+            }
+
+            try {
+                const result = await GroupRepo.DeleteGroup(group_id, requester_user_id);
+                if (result.status === 'Success') {
+                    return { isSuccess: true, pesan: result.pesan };
+                } else {
+                    return { isSuccess: false, pesan: result.pesan };
+                }
+            } catch (err) {
+                console.error("Error di Service Group (DeleteGroup):", err.message);
+                throw err;
+            }
+        }
+
+        static async UpdateGroup(group_id, user_id, group_name, group_description) {
+            if (!group_id || !user_id || !group_name) {
+                return { isSuccess: false, pesan: 'group_id, user_id, dan group_name wajib diisi!' };
+            }
+
+            try {
+                const result = await GroupRepo.UpdateGroup(group_id, user_id, group_name, group_description);
+                if (result.status === 'Success') {
+                    return { isSuccess: true, pesan: result.pesan };
+                } else {
+                    return { isSuccess: false, pesan: result.pesan };
+                }
+            } catch (err) {
+                console.error("Error di Service Group:", err.message);
+                throw err;
+            }
+        }
+
     }
 
     module.exports = GroupService;
