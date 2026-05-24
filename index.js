@@ -27,7 +27,10 @@
     app.post('/api/userUISkill', AuthController.InsertUpdateUserSkill); 
     app.post('/api/userUpdatePassword', AuthController.UpdatePassword); 
     app.post('/api/userGetSkill', AuthController.GetSkill); 
-    //GROUP
+    app.post('/api/userUpdate', AuthController.UpdateUser);
+
+
+//GROUP
     app.post('/api/groupCreate', GroupController.InsertGroup);
     app.post('/api/groupJoin', GroupController.JoinGroup);
     app.post('/api/groupKick', GroupController.KickGroup);  

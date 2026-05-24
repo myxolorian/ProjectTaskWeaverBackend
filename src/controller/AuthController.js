@@ -97,7 +97,20 @@ class AuthController {
     }
 
 
-
+    static async UpdateUser(req, res) {
+        const { user_id, user_full_name, user_email, user_phone_number } = req.body;
+        try {
+            const result = await AuthService.UpdateUser(user_id, user_full_name, user_email, user_phone_number);
+            if (result.isSuccess) {
+                res.status(200).json({ status: "sukses", pesan: result.pesan });
+            } else {
+                res.status(400).json({ status: "gagal", pesan: result.pesan });
+            }
+        } catch (err) {
+            console.error("Error di Controller (User):", err.message);
+            res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
+        }
+    }
 
 
 }

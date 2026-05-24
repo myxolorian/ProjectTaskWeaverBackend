@@ -105,6 +105,25 @@ class AuthRepo {
 
 
 
+    static async UpdateUser(user_id, full_name, user_email, phone_number) {
+        try {
+            const query = `SELECT status, message FROM update_user($1, $2, $3, $4)`;
+            const values = [user_id, full_name, user_email, phone_number];
+
+            const result = await pool.query(query, values);
+            const responsDariSP = result.rows[0];
+
+            return {
+                status: responsDariSP.status,
+                pesan: responsDariSP.message
+            };
+        } catch (err) {
+            console.error("Error di Repo User", err.message);
+            throw err;
+        }
+    }
+
+
 }
 
 module.exports = AuthRepo;

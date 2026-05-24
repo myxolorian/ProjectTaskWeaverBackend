@@ -87,9 +87,22 @@ class AuthService {
             throw err;
         }
     }
-
-
-
+    static async UpdateUser(user_id, full_name, user_email, phone_number) {
+        if (!user_id || !full_name || !user_email) {
+            return { isSuccess: false, pesan: 'user_id, full_name, dan user_email wajib diisi!' };
+        }
+        try {
+            const result = await AuthRepo.UpdateUser(user_id, full_name, user_email, phone_number);
+            if (result.status === 'Success') {
+                return { isSuccess: true, pesan: result.pesan };
+            } else {
+                return { isSuccess: false, pesan: result.pesan };
+            }
+        } catch (err) {
+            console.error("Error di Service User:", err.message);
+            throw err;
+        }
+    }
 
 }
 
