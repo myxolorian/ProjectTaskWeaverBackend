@@ -69,28 +69,14 @@ class GroupRepo {
         }
     }
 
-    static async GetMember(group_id) { 
+    static async GetMember(group_id) {
         try {
             const finalGroupId = group_id || null;
 
-            const query = `
-                SELECT
-                    m.group_id,
-                    m.user_id,
-                    m.user_role,
-                    m.audited_time AS join_date,
-                    b.user_full_name,
-                    b.user_email
-                FROM tr_enrollment m
-                JOIN ms_user b ON m.user_id = b.user_id
-                WHERE m.audited_activity <> 'D'
-                  AND b.audited_activity <> 'D'
-                  AND ($1::bigint IS NULL OR m.group_id = $1::bigint)
-            `;
-
+            const query = `SELECT * FROM get_enrollment($1)`;
             const result = await pool.query(query, [finalGroupId]);
-            return result.rows;
 
+            return result.rows;
         } catch (err) {
             console.error("Error di Repo Group (GetMember):", err.message);
             throw err;
@@ -196,6 +182,27 @@ class GroupRepo {
             throw err;
         }
     }
+
+
+
+    static async UpdateUserRole(group_id, user_id, requester_id, user_role) {
+        try {
+            const query = `SELECT status, message FROM update_user_role_by_id($1, $2, $3, $4)`;
+            const values = [group_id, user_id, requester_id, user_role];
+
+            const result = await pool.query(query, values);
+            const responsDariSP = result.rows[0];
+
+            return {
+                status: responsDariSP.status,
+                pesan: responsDariSP.message
+            };
+        } catch (err) {
+            console.error("Error di Repo Group", err.message);
+            throw err;
+        }
+    }
+
 }
 
 module.exports = GroupRepo;

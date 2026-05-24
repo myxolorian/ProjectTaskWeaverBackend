@@ -38,7 +38,7 @@
     app.post('/api/groupGetGroupByUserId', GroupController.GetGroupByUserID);
     app.post('/api/groupDelete', GroupController.DeleteGroup);
     app.post('/api/groupUpdate', GroupController.UpdateGroup); 
-
+    app.post('/api/groupUpdateRole', GroupController.UpdateUserRole);
 
     //TASK
     app.post('/api/taskCreate', TaskController.InsertTask);

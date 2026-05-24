@@ -159,6 +159,25 @@
             }
         }
 
+
+
+        static async UpdateUserRole(group_id, user_id, requester_id, user_role) {
+            if (!group_id || !user_id || !requester_id || !user_role) {
+                return { isSuccess: false, pesan: 'group_id, user_id, requester_id, dan user_role wajib diisi!' };
+            }
+            try {
+                const result = await GroupRepo.UpdateUserRole(group_id, user_id, requester_id, user_role);
+                if (result.status === 'Success') {
+                    return { isSuccess: true, pesan: result.pesan };
+                } else {
+                    return { isSuccess: false, pesan: result.pesan };
+                }
+            } catch (err) {
+                console.error("Error di Service Group:", err.message);
+                throw err;
+            }
+        }
+
     }
 
     module.exports = GroupService;
