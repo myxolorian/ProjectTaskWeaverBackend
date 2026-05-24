@@ -53,13 +53,12 @@ class AuthService {
             throw err;
         }
     }
-
-    static async InsertUpdateUserSkill(user_id, user_skill) {
+    static async InsertSkill(user_id, user_skill) {
         if (!user_id || !user_skill) {
             return { isSuccess: false, pesan: 'user_id dan user_skill wajib diisi!' };
         }
         try {
-            const result = await AuthRepo.InsertUpdateUserSkill(user_id, user_skill);
+            const result = await AuthRepo.InsertSkill(user_id, user_skill);
             if (result.status === 'Success') {
                 return { isSuccess: true, pesan: result.pesan };
             } else {
@@ -71,6 +70,22 @@ class AuthService {
         }
     }
 
+    static async UpdateSkill(user_id, user_skill) {
+        if (!user_id || !user_skill) {
+            return { isSuccess: false, pesan: 'user_id dan user_skill wajib diisi!' };
+        }
+        try {
+            const result = await AuthRepo.UpdateSkill(user_id, user_skill);
+            if (result.status === 'Success') {
+                return { isSuccess: true, pesan: result.pesan };
+            } else {
+                return { isSuccess: false, pesan: result.pesan };
+            }
+        } catch (err) {
+            console.error("Error di Service User:", err.message);
+            throw err;
+        }
+    }
     static async GetSkill(user_id) {
         if (!user_id) {
             return { isSuccess: false, pesan: 'user_id wajib diisi!' };
@@ -78,7 +93,7 @@ class AuthService {
         try {
             const result = await AuthRepo.GetSkill(user_id);
             if (result.status === 'Success') {
-                return { isSuccess: true, pesan: result.pesan, user_skill: result.user_skill };
+                return { isSuccess: true, pesan: result.pesan, data: result.data };
             } else {
                 return { isSuccess: false, pesan: result.pesan };
             }

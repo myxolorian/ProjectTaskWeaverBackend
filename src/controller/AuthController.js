@@ -66,10 +66,25 @@ class AuthController {
     }
 
 
-    static async InsertUpdateUserSkill(req, res) {
+    static async InsertSkill(req, res) {
         const { user_id, user_skill } = req.body;
         try {
-            const result = await AuthService.InsertUpdateUserSkill(user_id, user_skill);
+            const result = await AuthService.InsertSkill(user_id, user_skill);
+            if (result.isSuccess) {
+                res.status(201).json({ status: "sukses", pesan: result.pesan });
+            } else {
+                res.status(400).json({ status: "gagal", pesan: result.pesan });
+            }
+        } catch (err) {
+            console.error("Error di Controller (User):", err.message);
+            res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
+        }
+    }
+
+    static async UpdateSkill(req, res) {
+        const { user_id, user_skill } = req.body;
+        try {
+            const result = await AuthService.UpdateSkill(user_id, user_skill);
             if (result.isSuccess) {
                 res.status(200).json({ status: "sukses", pesan: result.pesan });
             } else {
@@ -86,7 +101,7 @@ class AuthController {
         try {
             const result = await AuthService.GetSkill(user_id);
             if (result.isSuccess) {
-                res.status(200).json({ status: "sukses", user_skill: result.user_skill });
+                res.status(200).json({ status: "sukses", data: result.data });
             } else {
                 res.status(400).json({ status: "gagal", pesan: result.pesan });
             }

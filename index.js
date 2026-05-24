@@ -24,7 +24,9 @@
     // User 
     app.post('/api/register', AuthController.register);
     app.post('/api/login', AuthController.login);
-    app.post('/api/userUISkill', AuthController.InsertUpdateUserSkill); 
+app.post('/api/userUISkill', AuthController.InsertSkill);
+app.post('/api/userUpdateSkill', AuthController.UpdateSkill);
+    app.post('/api/userDISkill', AuthController.DeleteSkill); 
     app.post('/api/userUpdatePassword', AuthController.UpdatePassword); 
     app.post('/api/userGetSkill', AuthController.GetSkill); 
     app.post('/api/userUpdate', AuthController.UpdateUser);

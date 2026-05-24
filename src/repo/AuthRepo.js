@@ -1,6 +1,6 @@
 const { pool } = require('../config/db'); 
 const UserModel = require('../model/UserModel');
-
+const SkillModel = require('../model/SkillModel');
 class AuthRepo {
 
     static async registerUserInDB(fullName, password, email, phoneNumber) {
@@ -24,7 +24,7 @@ class AuthRepo {
 
     static async loginUserInDB(email, password) {
         try {
-            const query = `SELECT user_id, user_email, user_full_name, user_phone_number, user_skillFROM login_user($1, $2)`;
+            const query = `SELECT user_id, user_email, user_full_name, user_phone_number, user_skill FROM login_user($1, $2)`;
             const values = [email, password];
 
             const result = await pool.query(query, values);
@@ -68,8 +68,7 @@ class AuthRepo {
         }
     }
 
-
-    static async InsertUpdateUserSkill(user_id, user_skill) {
+    static async InsertSkill(user_id, user_skill) {
         try {
             const query = `SELECT status, message FROM insert_user_skill($1, $2)`;
             const values = [user_id, user_skill];
@@ -87,15 +86,42 @@ class AuthRepo {
         }
     }
 
-    static async GetSkill(user_id) {
+    static async UpdateSkill(user_id, user_skill) {
         try {
-            const result = await pool.query(`SELECT status, message, user_skill FROM get_user_skill($1)`, [user_id]);
+            const query = `SELECT status, message FROM update_user_skill($1, $2)`;
+            const values = [user_id, user_skill];
+
+            const result = await pool.query(query, values);
             const responsDariSP = result.rows[0];
 
             return {
                 status: responsDariSP.status,
+                pesan: responsDariSP.message
+            };
+        } catch (err) {
+            console.error("Error di Repo User", err.message);
+            throw err;
+        }
+    }
+
+    static async GetSkill(user_id) {
+        try {
+            const query = `SELECT status, message, user_skill FROM get_user_skill($1)`;
+            const result = await pool.query(query, [user_id]);
+            const responsDariSP = result.rows[0];
+
+            const isSuccess = responsDariSP.status === 'Success';
+
+            let skillData = null;
+            if (isSuccess) {
+                skillData = new SkillModel();
+                skillData.fillFromDb(responsDariSP);
+            }
+
+            return {
+                status: responsDariSP.status,
                 pesan: responsDariSP.message,
-                user_skill: responsDariSP.user_skill
+                data: skillData
             };
         } catch (err) {
             console.error("Error di Repo User", err.message);
