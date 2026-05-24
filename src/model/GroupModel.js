@@ -12,6 +12,7 @@ class GroupModel {
         this.group_name = row.group_name;
         this.group_description = row.group_description;
         this.group_invite_code = row.group_invitecode || null;
+   
     }
 }
 
