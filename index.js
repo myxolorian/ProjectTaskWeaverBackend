@@ -26,6 +26,10 @@
     app.post('/api/login', AuthController.login);
 app.post('/api/userUISkill', AuthController.InsertSkill);
 app.post('/api/userUpdateSkill', AuthController.UpdateSkill);
+<<<<<<< HEAD
+=======
+    // app.post('/api/userDISkill', AuthController.DeleteSkill); 
+>>>>>>> 431266b65c8b3c8e0b489bd1fbd30c27a6deaa4a
     app.post('/api/userUpdatePassword', AuthController.UpdatePassword); 
     app.post('/api/userGetSkill', AuthController.GetSkill); 
     app.post('/api/userUpdate', AuthController.UpdateUser);
