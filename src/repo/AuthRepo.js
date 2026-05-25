@@ -24,7 +24,7 @@ class AuthRepo {
 
     static async loginUserInDB(email, password) {
         try {
-            const query = `SELECT user_id, user_email, user_full_name, user_phone_number, user_skill FROM login_user($1, $2)`;
+            const query = `SELECT user_id, user_email, user_full_name, user_phone_number FROM login_user($1, $2)`;
             const values = [email, password];
 
             const result = await pool.query(query, values);
