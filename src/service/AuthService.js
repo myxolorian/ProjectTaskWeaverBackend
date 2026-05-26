@@ -53,19 +53,33 @@ class AuthService {
             throw err;
         }
     }
+
     static async InsertSkill(user_id, user_skill) {
         if (!user_id || !user_skill) {
             return { isSuccess: false, pesan: 'user_id dan user_skill wajib diisi!' };
         }
-        try {
-            const result = await AuthRepo.InsertSkill(user_id, user_skill);
+        
+        // DITAMBAHKAN TRY DI SINI
+        try { 
+            const checkSkill = await AuthRepo.GetSkill(user_id);
+            
+            let result;
+            // 2. Tentukan mau Insert atau Update berdasarkan jawaban Supabase
+            if (checkSkill.status === 'Error' && checkSkill.pesan === 'Skill belum diisi') {
+                result = await AuthRepo.InsertSkill(user_id, user_skill); // Belum ada, maka Insert
+            } else if (checkSkill.status === 'Success') {
+                result = await AuthRepo.UpdateSkill(user_id, user_skill); // Sudah ada, maka Update
+            } else {
+                return { isSuccess: false, pesan: checkSkill.pesan }; // Error lain
+            }
+            // console.log("result insert/update:", JSON.stringify(result));
             if (result.status === 'Success') {
                 return { isSuccess: true, pesan: result.pesan };
             } else {
                 return { isSuccess: false, pesan: result.pesan };
             }
         } catch (err) {
-            console.error("Error di Service User:", err.message);
+            console.error("Error di Service User (InsertSkill):", err.message);
             throw err;
         }
     }
@@ -86,6 +100,7 @@ class AuthService {
             throw err;
         }
     }
+
     static async GetSkill(user_id) {
         if (!user_id) {
             return { isSuccess: false, pesan: 'user_id wajib diisi!' };
@@ -94,14 +109,18 @@ class AuthService {
             const result = await AuthRepo.GetSkill(user_id);
             if (result.status === 'Success') {
                 return { isSuccess: true, pesan: result.pesan, data: result.data };
+            } else if (result.status === 'Error' && result.pesan === 'Skill belum diisi') {
+                // Biar frontend React tidak crash saat skill belum ada
+                return { isSuccess: true, pesan: "Skill kosong", data: { user_skill: "" } };
             } else {
                 return { isSuccess: false, pesan: result.pesan };
             }
         } catch (err) {
-            console.error("Error di Service User:", err.message);
+            console.error("Error di Service User (GetSkill):", err.message);
             throw err;
         }
     }
+
     static async UpdateUser(user_id, full_name, user_email, phone_number) {
         if (!user_id || !full_name || !user_email) {
             return { isSuccess: false, pesan: 'user_id, full_name, dan user_email wajib diisi!' };

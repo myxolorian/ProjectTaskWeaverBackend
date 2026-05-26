@@ -97,16 +97,20 @@ class AuthController {
     }
 
     static async GetSkill(req, res) {
-        const { user_id } = req.body;
+       const { user_id } = req.body;
         try {
             const result = await AuthService.GetSkill(user_id);
             if (result.isSuccess) {
-                res.status(200).json({ status: "sukses", data: result.data });
+                res.status(200).json({ 
+                    status: "sukses", 
+                    // Keluarkan user_skill langsung agar bisa ditangkap oleh React
+                    user_skill: result.data ? result.data.user_skill : "" 
+                });
             } else {
                 res.status(400).json({ status: "gagal", pesan: result.pesan });
             }
         } catch (err) {
-            console.error("Error di Controller (User):", err.message);
+            console.error("Error di Controller (GetSkill):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
