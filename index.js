@@ -66,7 +66,9 @@
     app.post('/api/chatSend', ChatController.sendChat);
     //getChat by channel id and group id
     //delete chat by chat id
+    app.post('/api/chatDelete', ChatController.DeleteChat);
     //update chat by chat id, ini opsional lah ya
+    app.post('/api/chatUpdate', ChatController.UpdateChat);
    
 
     app.get('/', (req, res) => {
