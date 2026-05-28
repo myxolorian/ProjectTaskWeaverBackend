@@ -72,15 +72,15 @@ class GroupRepo {
     static async GetMember(group_id) {
         try {
             const finalGroupId = group_id || null;
-
             const query = `SELECT * FROM get_enrollment($1)`;
             const result = await pool.query(query, [finalGroupId]);
-
-            return result.rows;
+        
+            // Pastikan mengembalikan array kosong jika tidak ada data, bukan undefined
+            return result.rows || []; 
         } catch (err) {
-            console.error("Error di Repo Group (GetMember):", err.message);
-            throw err;
-        }
+        console.error("Error di Repo Group (GetMember):", err.message);
+        throw err; // Lempar ke service
+    }
     }
 
     static async GetInviteCode(group_id) {

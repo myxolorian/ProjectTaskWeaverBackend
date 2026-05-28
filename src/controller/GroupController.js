@@ -87,17 +87,18 @@ class GroupController {
 
     static async GetMember(req, res) {
         const { group_id } = req.body;
+    if (!group_id) return res.status(400).json({ status: "gagal", pesan: "ID grup diperlukan" });
 
-        try {
-            const result = await GroupService.GetMember(group_id);
-            res.status(200).json({
-                status: "sukses",
-                data: result.data
-            });
-        } catch (err) {
-            console.error("Error di Controller (Group):", err.message);
-            res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
+    try {
+        const result = await GroupService.GetMember(group_id);
+        if (result.isSuccess) {
+            res.status(200).json({ status: "sukses", data: result.data });
+        } else {
+            res.status(500).json({ status: "gagal", pesan: result.pesan });
         }
+    } catch (err) {
+        res.status(500).json({ status: "error", pesan: "Terjadi kesalahan sistem" });
+    }
     }
 
     static async GetGroupbyInviteCode(req, res) {

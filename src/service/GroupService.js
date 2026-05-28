@@ -74,13 +74,12 @@
 
         static async GetMember(group_id) {
             try {
-                const data = await GroupRepo.GetMember(group_id);
-
-                return { isSuccess: true, data: data };
-            } catch (err) {
-                console.error("Error di Service Group:", err.message);
-                throw err;
-            }
+        const data = await GroupRepo.GetMember(group_id);
+        // Selalu kembalikan objek dengan struktur yang konsisten
+        return { isSuccess: true, data: data };
+         } catch (err) {
+            return { isSuccess: false, pesan: err.message };
+          }
         }
 
         static async GetInviteCode(group_id) {

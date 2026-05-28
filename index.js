@@ -1,3 +1,4 @@
+    require('dotenv').config();
     const express = require('express');
     const cors = require('cors');
     const { getConnection } = require('./src/config/db.js'); 
@@ -7,6 +8,8 @@
     const TaskController = require('./src/controller/TaskController');
     const ChannelController = require('./src/controller/ChannelController');
     const ChatController = require('./src/controller/ChatController');
+    const DetailTaskController = require('./src/controller/DetailTaskController');
+    const AIController = require('./src/controller/AIController');
 
     const app = express();
     const port = 3000;
@@ -54,6 +57,12 @@
     app.post('/api/taskGetById', TaskController.GetTaskById);
     app.post('/api/taskGetByUser', TaskController.GetTasksByUser);
 
+    // DETAIL TASK
+    app.post('/api/detailTaskInsert', DetailTaskController.InsertDetailTask);
+    app.post('/api/detailTaskGetByUser', DetailTaskController.GetDetailTasksByUser);
+    app.post('/api/detailTaskGetByTask', DetailTaskController.GetDetailTasksByTask);
+    app.post('/api/detailTaskGetByGroup', DetailTaskController.GetDetailTasksByGroup);
+    app.post('/api/detailTaskUpdateStatus', DetailTaskController.UpdateDetailTaskStatus);
 
     //CHANNEL
     app.post('/api/channelCreate', ChannelController.createChannel);
@@ -70,7 +79,10 @@
     //update chat by chat id, ini opsional lah ya
     app.post('/api/chatUpdate', ChatController.UpdateChat);
    
-
+    // AI
+    app.post('/api/taskBreakdown', AIController.BreakdownTask);
+    app.post('/api/taskRebalance', AIController.RebalanceTask);
+    
     app.get('/', (req, res) => {
         res.send('Backend TaskWeaver (Supabase Version) berjalan!');
     });
