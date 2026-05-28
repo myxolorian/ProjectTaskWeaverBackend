@@ -74,7 +74,7 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
 `;
  
             // 4. Call Gemini
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
             const geminiResult = await model.generateContent(prompt);
             const rawText = geminiResult.response.text().trim();
  
@@ -200,7 +200,7 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
 ]
 `;
  
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
             const geminiResult = await model.generateContent(prompt);
             const rawText = geminiResult.response.text().trim();
  
