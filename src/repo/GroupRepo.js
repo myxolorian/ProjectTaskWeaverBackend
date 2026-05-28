@@ -81,6 +81,7 @@ class GroupRepo {
         console.error("Error di Repo Group (GetMember):", err.message);
         throw err; // Lempar ke service
     }
+
     }
 
     static async GetInviteCode(group_id) {

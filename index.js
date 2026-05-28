@@ -74,6 +74,7 @@
     //CHAT
     app.post('/api/chatSend', ChatController.sendChat);
     //getChat by channel id and group id
+    app.post('/api/chatGet', ChatController.GetChat);
     //delete chat by chat id
     app.post('/api/chatDelete', ChatController.DeleteChat);
     //update chat by chat id, ini opsional lah ya

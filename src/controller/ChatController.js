@@ -71,6 +71,18 @@ class ChatController {
         }
     }
 
+    static async GetChat(req, res) {
+        const { group_id, channel_id } = req.body;
+
+        try {
+            const result = await ChatService.GetChatByChannelAndGroup(group_id, channel_id);
+            res.status(200).json({ status: "sukses", data: result.data });
+        } catch (err) {
+            console.error("❌ Error di Controller Chat (GetChat):", err.message);
+            res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
+        }
+    }
+
 }
 
 module.exports = ChatController;

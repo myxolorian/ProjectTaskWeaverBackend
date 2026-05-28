@@ -58,6 +58,30 @@ class ChatRepo {
         }
     }
 
+    static async GetChatByChannelAndGroup(group_id, channel_id) {
+        try {
+            const result = await pool.query(
+                `SELECT * FROM get_chat_by_channel_and_group($1, $2)`,
+                [group_id, channel_id]
+            );
+
+            const isSuccess = result.rows.length > 0;
+
+            const chatList = isSuccess
+                ? result.rows.map(dataMentah => {
+                    const chat = new ChatModel();
+                    chat.fillFromDb(dataMentah);
+                    return chat;
+                })
+                : [];
+
+            return { isSuccess, data: chatList };
+        } catch (err) {
+            console.error("Error di Chat Repo (GetChat):", err.message);
+            throw err;
+        }
+    }
+
 }
 
 module.exports = ChatRepo;

@@ -55,6 +55,19 @@ class ChatService {
         }
     }
 
+    static async GetChatByChannelAndGroup(group_id, channel_id) {
+        if (!group_id || !channel_id) {
+            return { isSuccess: false, pesan: 'Group ID dan Channel ID wajib diisi!' };
+        }
+
+        try {
+            return await ChatRepo.GetChatByChannelAndGroup(group_id, channel_id);
+        } catch (err) {
+            console.error("Error di Chat Service (GetChat):", err.message);
+            throw err;
+        }
+    }
+
 
 
 }
