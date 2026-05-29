@@ -7,6 +7,7 @@ class DetailTaskModel {
         this.DetailTaskDeadline = null;
         this.DetailTaskStatus = null;
         this.PrerequisiteDetailTaskId = null;
+        this.UserFullName = null; 
     }
 
     fillFromDb(row) {
@@ -18,6 +19,7 @@ class DetailTaskModel {
         this.DetailTaskDeadline = row.detail_task_deadline;
         this.DetailTaskStatus = row.detail_task_status;
         this.PrerequisiteDetailTaskId = row.prerequisite_detail_task_id;
+        this.UserFullName = row.user_full_name || row.assigned_user_name; 
     }
 }
 
