@@ -13,6 +13,7 @@ const ChatController = require('./src/controller/ChatController');
 const DetailTaskController = require('./src/controller/DetailTaskController');
 const AIController = require('./src/controller/AIController');
 const DetailTaskFileController = require('./src/controller/DetailTaskFileController'); 
+const ActivityController = require('./src/controller/ActivityController');
 
 const app = express();
 const port = 3000;
@@ -83,17 +84,23 @@ app.post('/api/chatUpdate', ChatController.UpdateChat);
 // AI
 app.post('/api/taskBreakdown', AIController.BreakdownTask);
 app.post('/api/taskRebalance', AIController.RebalanceTask);
+app.post('/api/groupRebalance', AIController.RebalanceGroup)
 
 // DETAIL TASK FILE
 app.post('/api/insertTaskFile', upload.single('file'), DetailTaskFileController.UploadFile);
 app.post('/api/getTaskFilesByGroup', DetailTaskFileController.GetFilesByGroup);
 app.post('/api/getTaskFileByCategory', DetailTaskFileController.GetFilesByCategory);
+app.post('/api/deleteTaskFile', DetailTaskFileController.DeleteFile);
+
+//activity
+app.post('/api/getActivityByGroup', ActivityController.GetActivity);
+app.post('/api/activityCreate', ActivityController.CreateActivity);
 
 app.get('/', (req, res) => {
     res.send('Backend TaskWeaver (Supabase Version) berjalan!');
 });
 
 app.listen(port, () => {
-    console.log(`🥰 Server TaskWeaver jalan di port ${port}`);
-    console.log(`🥰 Coba akses: http://localhost:${port}`);
+    console.log(`Server TaskWeaver jalan di port ${port}`);
+    console.log(`Coba akses: http://localhost:${port}`);
 });

@@ -48,6 +48,19 @@ class DetailTaskFileRepo {
             throw err;
         }
     }
+     static async DeleteTaskFile(file_id) {
+            try {
+              
+                const query = `SELECT status, message FROM delete_task_file($1::bigint)`;
+                const result = await pool.query(query, [file_id]);
+                const row = result.rows[0];
+    
+                return { status: row.status, pesan: row.message };
+            } catch (err) {
+                console.error("Error di Repo TaskFile (Delete):", err.message);
+                throw err;
+            }
+        }
 }
 
 module.exports = DetailTaskFileRepo;

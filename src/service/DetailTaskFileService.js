@@ -67,6 +67,22 @@ class DetailTaskFileService {
             throw err;
         }
     }
+
+    static async DeleteTaskFile(file_id) {
+        if (!file_id) return { isSuccess: false, pesan: 'file_id wajib diisi!' };
+
+        try {
+            const result = await DetailTaskFileRepo.DeleteTaskFile(file_id);
+            if (result.status === 'Success') {
+                return { isSuccess: true, pesan: result.pesan };
+            } else {
+                return { isSuccess: false, pesan: result.pesan };
+            }
+        } catch (err) {
+            console.error("Error di Service TaskFile (Delete):", err.message);
+            throw err;
+        }
+    }
 }
 
 module.exports = DetailTaskFileService;

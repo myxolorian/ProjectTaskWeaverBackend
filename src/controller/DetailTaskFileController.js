@@ -65,5 +65,22 @@ class DetailTaskFileController {
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
+
+    static async DeleteFile(req, res) {
+        const { file_id } = req.body;
+
+        try {
+            const result = await DetailTaskFileService.DeleteTaskFile(file_id);
+
+            if (result.isSuccess) {
+                res.status(200).json({ status: "sukses", pesan: result.pesan });
+            } else {
+                res.status(400).json({ status: "gagal", pesan: result.pesan });
+            }
+        } catch (err) {
+            console.error("Error di Controller DetailTaskFile (DeleteFile):", err.message);
+            res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
+        }
+    }
 }
 module.exports = DetailTaskFileController;
