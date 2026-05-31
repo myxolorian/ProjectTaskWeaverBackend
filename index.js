@@ -85,9 +85,9 @@ app.post('/api/taskBreakdown', AIController.BreakdownTask);
 app.post('/api/taskRebalance', AIController.RebalanceTask);
 
 // DETAIL TASK FILE
-app.post('/api/uploadTaskFile', upload.single('file'), DetailTaskFileController.UploadFile);
+app.post('/api/insertTaskFile', upload.single('file'), DetailTaskFileController.UploadFile);
 app.post('/api/getTaskFilesByGroup', DetailTaskFileController.GetFilesByGroup);
-
+app.post('/api/getTaskFileByCategory', DetailTaskFileController.GetFilesByCategory);
 
 app.get('/', (req, res) => {
     res.send('Backend TaskWeaver (Supabase Version) berjalan!');

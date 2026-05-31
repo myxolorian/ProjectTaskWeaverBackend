@@ -7,9 +7,9 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 class DetailTaskFileService {
 
-    static async UploadAndInsertFile(fileBuffer, originalName, mimeType, detail_task_id, uploaded_by, group_id) {
-        if (!fileBuffer || !detail_task_id || !uploaded_by || !group_id) {
-            return { isSuccess: false, pesan: 'File dan data pelengkap wajib diisi!' };
+    static async UploadAndInsertFile(fileBuffer, originalName, mimeType, detail_task_id, uploaded_by, group_id, file_category) {
+        if (!fileBuffer || !detail_task_id || !uploaded_by || !group_id || !file_category) {
+            return { isSuccess: false, pesan: 'File, data pelengkap, dan kategori wajib diisi!' };
         }
 
         try {
@@ -30,7 +30,7 @@ class DetailTaskFileService {
 
             const file_url = publicUrlData.publicUrl;
 
-            const result = await DetailTaskFileRepo.InsertDetailTaskFile(detail_task_id, uploaded_by, originalName, file_url, group_id);
+            const result = await DetailTaskFileRepo.InsertDetailTaskFile(detail_task_id, uploaded_by, originalName, file_url, group_id, file_category);
 
             if (result.status === 'Success') {
                 return { isSuccess: true, pesan: result.pesan, file_url: file_url };
@@ -52,6 +52,18 @@ class DetailTaskFileService {
             return { isSuccess: true, data: data };
         } catch (err) {
             console.error("Error di Service TaskFile (GetByGroup):", err.message);
+            throw err;
+        }
+    }
+
+    static async GetTaskFilesByCategory(group_id, file_category) {
+        if (!group_id || !file_category) return { isSuccess: false, pesan: 'group_id dan file_category wajib diisi!' };
+
+        try {
+            const data = await DetailTaskFileRepo.GetTaskFilesByCategory(group_id, file_category);
+            return { isSuccess: true, data: data };
+        } catch (err) {
+            console.error("Error di Service TaskFile (GetByCategory):", err.message);
             throw err;
         }
     }
