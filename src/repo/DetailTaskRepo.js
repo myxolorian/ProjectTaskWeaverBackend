@@ -48,7 +48,7 @@ class DetailTaskRepo {
  
     static async GetDetailTasksByGroup(group_id) {
         try {
-            const query = `SELECT * FROM get_detail_tasks_by_group($1)`;
+            const query = `SELECT * FROM get_detail_tasks_by_group($1::integer)`;
             const result = await pool.query(query, [group_id]);
             return result.rows.map(row => {
                 const m = new DetailTaskModel();

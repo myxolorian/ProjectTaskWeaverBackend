@@ -41,7 +41,7 @@ class AIController {
                 const skills = parseSkills(m.user_skill);
                 return `- ${m.user_full_name} (ID: ${m.user_id}, Role: ${m.user_role}, Skills: ${skills.length > 0 ? skills.join(', ') : 'Tidak ada skill terdaftar'})`;
             }).join('\n');
- 
+            const hari_ini = new Date().toISOString().split('T')[0]
             // 3. Buat prompt Gemini
             const prompt = `
 Kamu adalah AI task manager yang bertugas memecah sebuah task besar menjadi subtask-subtask kecil dan mengassign ke anggota tim secara MERATA berdasarkan skill mereka.
@@ -59,7 +59,7 @@ INSTRUKSI:
 1. Buat 3 sampai ${Math.min(members.length * 2, 8)} subtask yang logis dan spesifik dari task di atas.
 2. Assign setiap subtask ke anggota yang paling cocok berdasarkan skillnya.
 3. Distribusikan workload MERATA - jangan satu orang dapat terlalu banyak subtask.
-4. Deadline subtask harus SEBELUM atau SAMA DENGAN deadline task besar: ${task_deadline}.
+4. Deadline subtask harus di antara hari ini (${hari_ini}) sampai batas maksimal deadline task besar (${task_deadline}). DILARANG memberikan deadline di masa lalu.
 5. Gunakan deadline yang realistis dan bertahap (subtask awal deadline lebih awal).
  
 Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
@@ -73,12 +73,11 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
 ]
 `;
  
-            // 4. Call Gemini
+            
             const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
             const geminiResult = await model.generateContent(prompt);
             const rawText = geminiResult.response.text().trim();
  
-            // 5. Parse JSON dari Gemini
             let subtasks;
             try {
                 const cleaned = rawText.replace(/```json|```/g, '').trim();
@@ -123,9 +122,6 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
         }
     }
  
-    // POST /api/taskRebalance
-    // Body: { task_id, group_id, task_title, task_description, task_deadline }
-    // Fungsi: redistribute subtask yang belum selesai (todo/in-progress) ke member yang masih aktif
     static async RebalanceTask(req, res) {
         const { task_id, group_id, task_title, task_description, task_deadline } = req.body;
  
@@ -213,7 +209,6 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
                 return res.status(500).json({ status: "error", pesan: "AI response tidak valid, coba lagi." });
             }
  
-            // 5. Update assignment di DB
             const updateResults = [];
             for (const sub of rebalanced) {
                 try {
