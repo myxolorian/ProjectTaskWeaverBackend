@@ -94,6 +94,6 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`🚀 Server TaskWeaver jalan di port ${port}`);
-    console.log(`🔗 Coba akses: http://localhost:${port}`);
+    console.log(`🥰 Server TaskWeaver jalan di port ${port}`);
+    console.log(`🥰 Coba akses: http://localhost:${port}`);
 });
