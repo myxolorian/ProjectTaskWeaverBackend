@@ -1,4 +1,5 @@
 const ChatRepo = require('../repo/ChatRepo');
+
 class ChatService {
 
     static async sendChat(group_id, user_id, channel_id, chat_message) {
@@ -8,10 +9,10 @@ class ChatService {
 
         try {
             const result = await ChatRepo.sendChat(group_id, user_id, channel_id, chat_message);
-            if (result.status === 'Success') {
+            if (result.status && result.status.toLowerCase() === 'success') {
                 return { isSuccess: true, pesan: result.pesan };
             } else {
-                return { isSuccess: false, pesan: result.pesan };
+                return { isSuccess: false, pesan: result.pesan || 'Gagal mengirim pesan' };
             }
         } catch (err) {
             console.error("Error di Chat service SendChat :", err.message);
@@ -26,10 +27,10 @@ class ChatService {
 
         try {
             const result = await ChatRepo.UpdateChat(chat_id, user_id, chat_message);
-            if (result.status === 'Success') {
+            if (result.status && result.status.toLowerCase() === 'success') {
                 return { isSuccess: true, pesan: result.pesan };
             } else {
-                return { isSuccess: false, pesan: result.pesan };
+                return { isSuccess: false, pesan: result.pesan || 'Gagal memperbarui pesan' };
             }
         } catch (err) {
             console.error("Error di Chat Service (UpdateChat):", err.message);
@@ -44,10 +45,10 @@ class ChatService {
 
         try {
             const result = await ChatRepo.DeleteChat(chat_id, user_id);
-            if (result.status === 'Success') {
+            if (result.status && result.status.toLowerCase() === 'success') {
                 return { isSuccess: true, pesan: result.pesan };
             } else {
-                return { isSuccess: false, pesan: result.pesan };
+                return { isSuccess: false, pesan: result.pesan || 'Gagal menghapus pesan' };
             }
         } catch (err) {
             console.error("Error di Chat Service (DeleteChat):", err.message);
@@ -63,13 +64,10 @@ class ChatService {
         try {
             return await ChatRepo.GetChatByChannelAndGroup(group_id, channel_id);
         } catch (err) {
-            console.error("Error di Chat Service (GetChat):", err.message);
+            console.error("Error di Chat Service (GetChatByChannelAndGroup):", err.message);
             throw err;
         }
     }
-
-
-
 }
 
 module.exports = ChatService;
