@@ -18,13 +18,24 @@ class DetailTaskRepo {
  
     static async GetDetailTasksByUser(user_id) {
         try {
-            const query = `SELECT * FROM get_detail_tasks_by_user($1)`;
+            const query = `
+                SELECT 
+                    dt.detail_task_id,
+                    dt.task_id,
+                    dt.detail_task_name,
+                    dt.detail_task_deadline,
+                    dt.detail_task_status,
+                    t.group_id,
+                    g.group_name
+                FROM tr_detail_task dt
+                JOIN tr_task t ON dt.task_id = t.task_id
+                JOIN ms_group g ON t.group_id = g.group_id
+                WHERE dt.user_id = $1 
+                  AND dt.audited_activity <> 'D' 
+                  AND t.audited_activity <> 'D';
+            `;
             const result = await pool.query(query, [user_id]);
-            return result.rows.map(row => {
-                const m = new DetailTaskModel();
-                m.fillFromDb(row);
-                return m;
-            });
+            return result.rows; 
         } catch (err) {
             console.error("Error di Repo DetailTask (GetByUser):", err.message);
             throw err;
