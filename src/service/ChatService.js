@@ -10,7 +10,11 @@ class ChatService {
         try {
             const result = await ChatRepo.sendChat(group_id, user_id, channel_id, chat_message);
             if (result.status && result.status.toLowerCase() === 'success') {
-                return { isSuccess: true, pesan: result.pesan };
+                return { 
+                    isSuccess: true, 
+                    pesan: result.pesan,
+                    data: result.data // Meneruskan data chat tunggal
+                };
             } else {
                 return { isSuccess: false, pesan: result.pesan || 'Gagal mengirim pesan' };
             }

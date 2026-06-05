@@ -3,25 +3,29 @@ const ChatService = require('../service/ChatService');
 class ChatController {
 
     static async sendChat(req, res) {
-        const { group_id, user_id, channel_id, chat_message  } = req.body;
+        const { group_id, user_id, channel_id, chat_message } = req.body;
 
         try {
             const result = await ChatService.sendChat(group_id, user_id, channel_id, chat_message);
 
             if (result.isSuccess) {
-                // Broadcast real-time ke semua anggota channel (aditif; alur REST/SP tidak berubah)
+                const newMsg = result.data; // Mengambil data pesan yang didapat dari repo
+
+                // Broadcast real-time secara instan tanpa membebani query get total chat lagi
                 try {
                     const io = req.app.get('io');
-                    const list = await ChatService.GetChatByChannelAndGroup(group_id, channel_id);
-                    const newMsg = list?.data?.[list.data.length - 1]; // urut ASC -> terbaru di akhir
-                    if (io && newMsg) io.to(`channel:${channel_id}`).emit('chat:new', newMsg);
+                    if (io && newMsg) {
+                        io.to(`channel:${channel_id}`).emit('chat:new', newMsg);
+                    }
                 } catch (broadcastErr) {
                     console.error("Broadcast chat:new gagal:", broadcastErr.message);
                 }
 
+                // Mengembalikan data objek utuh ke frontend agar bisa ditukar id-nya (id-swapping)
                 res.status(201).json({
                     status: "sukses",
-                    pesan: result.pesan
+                    pesan: result.pesan,
+                    data: newMsg
                 });
             } else {
                 res.status(400).json({
@@ -35,7 +39,7 @@ class ChatController {
         }
     }
 
-     static async UpdateChat(req, res) {
+    static async UpdateChat(req, res) {
         const { chat_id, user_id, chat_message } = req.body;
 
         try {
@@ -92,7 +96,6 @@ class ChatController {
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
-
 }
 
 module.exports = ChatController;
