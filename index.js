@@ -14,8 +14,9 @@ const ChannelController = require('./src/controller/ChannelController');
 const ChatController = require('./src/controller/ChatController');
 const DetailTaskController = require('./src/controller/DetailTaskController');
 const AIController = require('./src/controller/AIController');
-const DetailTaskFileController = require('./src/controller/DetailTaskFileController'); 
+const DetailTaskFileController = require('./src/controller/DetailTaskFileController');
 const ActivityController = require('./src/controller/ActivityController');
+const FileBigTaskController = require('./src/controller/FileBigTaskController');
 
 const app = express();
 const port = 3000;
@@ -93,6 +94,12 @@ app.post('/api/insertTaskFile', upload.single('file'), DetailTaskFileController.
 app.post('/api/getTaskFilesByGroup', DetailTaskFileController.GetFilesByGroup);
 app.post('/api/getTaskFileByCategory', DetailTaskFileController.GetFilesByCategory);
 app.post('/api/deleteTaskFile', DetailTaskFileController.DeleteFile);
+
+// BIG TASK FILE
+app.post('/api/insertBigTaskFile', upload.single('file'), FileBigTaskController.UploadFile);
+app.post('/api/getBigTaskFilesByTask', FileBigTaskController.GetFilesByTask);
+app.post('/api/getBigTaskFilesByGroup', FileBigTaskController.GetFilesByGroup);
+app.post('/api/deleteBigTaskFile', FileBigTaskController.DeleteFile);
 
 //activity
 app.post('/api/getActivityByGroup', ActivityController.GetActivity);
