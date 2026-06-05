@@ -3,13 +3,20 @@ const GroupModel = require('../model/GroupModel');
 
 class GroupRepo {
 
-    static async InsertGroup(groupName, userId, invite_code, group_description) {
+    static async InsertGroup(groupName, userId, group_description, invite_code,) {
         try {
+            // Parameter order matches GroupService call:
+            // InsertGroup(groupName, userId, group_description, invite_code)
+            // SP: insert_group($1=groupName, $2=userId, $3=group_description, $4=invite_code)
             const query = `SELECT status, message FROM insert_group($1, $2, $3, $4)`;
             const values = [groupName, userId, invite_code, group_description];
 
+            console.log('[GroupRepo] InsertGroup values:', values);
+
             const result = await pool.query(query, values);
             const responsDariSP = result.rows[0];
+
+            console.log('[GroupRepo] InsertGroup SP response:', responsDariSP);
 
             return {
                 status: responsDariSP.status,
@@ -22,7 +29,7 @@ class GroupRepo {
     }
 
     static async JoinGroup(group_id, user_id, user_role) {
-        try {                                          
+        try {
             const query = `SELECT status, message FROM insert_enrollment($1, $2, $3)`;
             const values = [group_id, user_id, user_role];
 
@@ -40,7 +47,7 @@ class GroupRepo {
     }
 
     static async KickGroup(group_id, user_id, requester_user_id) {
-        try {                                          
+        try {
             const query = `SELECT status, message FROM delete_enrollment($1, $2, $3)`;
             const values = [group_id, user_id, requester_user_id];
 
@@ -74,14 +81,11 @@ class GroupRepo {
             const finalGroupId = group_id || null;
             const query = `SELECT * FROM get_enrollment($1)`;
             const result = await pool.query(query, [finalGroupId]);
-        
-            // Pastikan mengembalikan array kosong jika tidak ada data, bukan undefined
-            return result.rows || []; 
+            return result.rows || [];
         } catch (err) {
-        console.error("Error di Repo Group (GetMember):", err.message);
-        throw err; // Lempar ke service
-    }
-
+            console.error("Error di Repo Group (GetMember):", err.message);
+            throw err;
+        }
     }
 
     static async GetInviteCode(group_id) {
@@ -113,7 +117,7 @@ class GroupRepo {
 
             return {
                 isSuccess: isSuccess,
-                data: groupData 
+                data: groupData
             };
         } catch (err) {
             console.error("Error di Repo Group (GetGroupbyInviteCode):", err.message);
@@ -184,8 +188,6 @@ class GroupRepo {
         }
     }
 
-
-
     static async UpdateUserRole(group_id, user_id, requester_id, user_role) {
         try {
             const query = `SELECT status, message FROM update_user_role_by_id($1, $2, $3, $4)`;
@@ -199,11 +201,10 @@ class GroupRepo {
                 pesan: responsDariSP.message
             };
         } catch (err) {
-            console.error("Error di Repo Group", err.message);
+            console.error("Error di Repo Group (UpdateUserRole):", err.message);
             throw err;
         }
     }
-
 }
 
 module.exports = GroupRepo;

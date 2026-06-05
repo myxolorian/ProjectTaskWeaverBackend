@@ -3,9 +3,17 @@ const GroupService = require('../service/GroupService');
 class GroupController {
 
     static async InsertGroup(req, res) {
-		const { group_name, user_id , group_description, invite_code} = req.body; // kalau mau test  postman, pastikan body nya sesuai dengan ini ya, jadi group_name dan user_id harus ada di body
+        // Body: { group_name, user_id, group_description, invite_code }
+        const { group_name, user_id, group_description, invite_code } = req.body;
+
+        console.log('[GroupController] InsertGroup body:', req.body);
+
+        if (!group_name || !user_id) {
+            return res.status(400).json({ status: "gagal", pesan: "group_name dan user_id wajib diisi" });
+        }
 
         try {
+            // Call Service with consistent order: (groupName, userId, group_description, invite_code)
             const result = await GroupService.InsertGroup(group_name, user_id, group_description, invite_code);
 
             if (result.isSuccess) {
@@ -20,16 +28,16 @@ class GroupController {
                 });
             }
         } catch (err) {
-            console.error("Error di Controller (Group):", err.message);
+            console.error("Error di Controller (Group - InsertGroup):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
 
     static async JoinGroup(req, res) {
-        const { group_id, user_id, user_role } = req.body; // pastikan body nya sesuai dengan ini ya, jadi group_id, user_id, dan user_role_id harus ada di body
+        const { group_id, user_id, user_role } = req.body;
 
         try {
-			const result = await GroupService.JoinGroup(group_id, user_id, user_role);
+            const result = await GroupService.JoinGroup(group_id, user_id, user_role);
             if (result.isSuccess) {
                 res.status(201).json({
                     status: "sukses",
@@ -42,13 +50,13 @@ class GroupController {
                 });
             }
         } catch (err) {
-            console.error("Error di Controller (Group):", err.message);
+            console.error("Error di Controller (Group - JoinGroup):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
 
     static async KickGroup(req, res) {
-        const { group_id, user_id, user_requester_id } = req.body; // pastikan body nya sesuai dengan ini ya, jadi group_id, user_id, dan user_role_id harus ada di body
+        const { group_id, user_id, user_requester_id } = req.body;
 
         try {
             const result = await GroupService.KickGroup(group_id, user_id, user_requester_id);
@@ -64,7 +72,7 @@ class GroupController {
                 });
             }
         } catch (err) {
-            console.error("Error di Controller (Group):", err.message);
+            console.error("Error di Controller (Group - KickGroup):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
@@ -80,25 +88,25 @@ class GroupController {
                 data: result.data
             });
         } catch (err) {
-            console.error("Error di Controller (Group):", err.message);
+            console.error("Error di Controller (Group - GetGroup):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
 
     static async GetMember(req, res) {
         const { group_id } = req.body;
-    if (!group_id) return res.status(400).json({ status: "gagal", pesan: "ID grup diperlukan" });
+        if (!group_id) return res.status(400).json({ status: "gagal", pesan: "ID grup diperlukan" });
 
-    try {
-        const result = await GroupService.GetMember(group_id);
-        if (result.isSuccess) {
-            res.status(200).json({ status: "sukses", data: result.data });
-        } else {
-            res.status(500).json({ status: "gagal", pesan: result.pesan });
+        try {
+            const result = await GroupService.GetMember(group_id);
+            if (result.isSuccess) {
+                res.status(200).json({ status: "sukses", data: result.data });
+            } else {
+                res.status(500).json({ status: "gagal", pesan: result.pesan });
+            }
+        } catch (err) {
+            res.status(500).json({ status: "error", pesan: "Terjadi kesalahan sistem" });
         }
-    } catch (err) {
-        res.status(500).json({ status: "error", pesan: "Terjadi kesalahan sistem" });
-    }
     }
 
     static async GetGroupbyInviteCode(req, res) {
@@ -106,25 +114,22 @@ class GroupController {
 
         try {
             const result = await GroupService.GetGroupbyInviteCode(invite_code);
-            if(result.isSuccess)
-            {
+            if (result.isSuccess) {
                 res.status(200).json({
-                status: "sukses",
-                data: result.data
-            });
-            }else {
+                    status: "sukses",
+                    data: result.data
+                });
+            } else {
                 res.status(404).json({
                     status: "gagal",
                     pesan: "Invite Code tidak valid atau grup tidak ditemukan"
                 });
             }
-           
         } catch (err) {
-            console.error("Error di Controller (Group):", err.message);
+            console.error("Error di Controller (Group - GetGroupbyInviteCode):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
-
 
     static async GetInviteCode(req, res) {
         const { group_id } = req.body;
@@ -136,12 +141,12 @@ class GroupController {
                 data: result.data
             });
         } catch (err) {
-            console.error("Error di Controller (Group):", err.message);
+            console.error("Error di Controller (Group - GetInviteCode):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
 
-    //flow = user insert invite code -> get group id by invite code -> join group by group id
+    // flow: user insert invite code -> get group id by invite code -> join group by group id
 
     static async GetGroupByUserID(req, res) {
         const { user_id } = req.body;
@@ -159,16 +164,14 @@ class GroupController {
                     pesan: "User tidak bergabung di group"
                 });
             }
-
         } catch (err) {
-            console.error("Error di Controller (Group):", err.message);
+            console.error("Error di Controller (Group - GetGroupByUserID):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
 
-
     static async DeleteGroup(req, res) {
-        const { group_id, user_requester_id } = req.body; // pastikan body nya sesuai dengan ini ya, jadi group_id, user_id, dan user_role_id harus ada di body
+        const { group_id, user_requester_id } = req.body;
 
         try {
             const result = await GroupService.DeleteGroup(group_id, user_requester_id);
@@ -184,11 +187,10 @@ class GroupController {
                 });
             }
         } catch (err) {
-            console.error("Error di Controller (Group):", err.message);
+            console.error("Error di Controller (Group - DeleteGroup):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
-
 
     static async UpdateGroup(req, res) {
         const { group_id, user_id, group_name, group_description } = req.body;
@@ -201,7 +203,7 @@ class GroupController {
                 res.status(400).json({ status: "gagal", pesan: result.pesan });
             }
         } catch (err) {
-            console.error("Error di Controller (Group):", err.message);
+            console.error("Error di Controller (Group - UpdateGroup):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
@@ -216,11 +218,10 @@ class GroupController {
                 res.status(400).json({ status: "gagal", pesan: result.pesan });
             }
         } catch (err) {
-            console.error("Error di Controller (Group):", err.message);
+            console.error("Error di Controller (Group - UpdateUserRole):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
-
-
 }
+
 module.exports = GroupController;
