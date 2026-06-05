@@ -7,7 +7,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 async function getGroupMembersWithSkills(group_id) {
     const query = `SELECT * FROM get_enrollment($1)`;
     const result = await pool.query(query, [group_id]);
-    return result.rows; // { user_id, user_full_name, user_role, user_email, user_skill }
+    return result.rows; 
 }
  
 function parseSkills(user_skill) {
@@ -30,19 +30,17 @@ class AIController {
         }
  
         try {
-            // 1. Ambil members + skill
             const members = await getGroupMembersWithSkills(group_id);
             if (!members || members.length === 0) {
                 return res.status(400).json({ status: "gagal", pesan: "Tidak ada member di group ini!" });
             }
  
-            // 2. Format member list untuk prompt
             const memberList = members.map(m => {
                 const skills = parseSkills(m.user_skill);
                 return `- ${m.user_full_name} (ID: ${m.user_id}, Role: ${m.user_role}, Skills: ${skills.length > 0 ? skills.join(', ') : 'Tidak ada skill terdaftar'})`;
             }).join('\n');
             const hari_ini = new Date().toISOString().split('T')[0]
-            // 3. Buat prompt Gemini
+            
             const prompt = `
 Kamu adalah AI task manager yang bertugas memecah sebuah task besar menjadi subtask-subtask kecil dan mengassign ke anggota tim secara MERATA berdasarkan skill mereka.
  
@@ -73,7 +71,6 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
 ]
 `;
  
-            
             const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
             const geminiResult = await model.generateContent(prompt);
             const rawText = geminiResult.response.text().trim();
@@ -87,7 +84,6 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
                 return res.status(500).json({ status: "error", pesan: "AI response tidak valid, coba lagi." });
             }
  
-            // 6. Insert semua subtask ke DB
             const insertResults = [];
             for (const sub of subtasks) {
                 try {
@@ -130,7 +126,6 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
         }
  
         try {
-            // 1. Ambil subtask yang belum selesai
             const allSubtasks = await DetailTaskRepo.GetDetailTasksByTask(task_id);
             const unfinished = allSubtasks.filter(s =>
                 s.DetailTaskStatus !== 'completed' && s.DetailTaskStatus !== 'C'
@@ -140,13 +135,11 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
                 return res.status(200).json({ status: "sukses", pesan: "Semua subtask sudah selesai, tidak perlu rebalance!" });
             }
  
-            // 2. Ambil members aktif di group
             const members = await getGroupMembersWithSkills(group_id);
             if (!members || members.length === 0) {
                 return res.status(400).json({ status: "gagal", pesan: "Tidak ada member aktif di group ini!" });
             }
  
-            // 3. Hitung workload saat ini per member
             const workloadMap = {};
             members.forEach(m => { workloadMap[m.user_id] = 0; });
             allSubtasks.forEach(s => {
@@ -164,7 +157,6 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
                 `- ID: ${s.DetailTaskId}, Nama: "${s.DetailTaskName}", Deadline: ${s.DetailTaskDeadline}`
             ).join('\n');
  
-            // 4. Prompt rebalance ke Gemini
             const prompt = `
 Kamu adalah AI task manager. Ada subtask-subtask yang perlu di-redistribute karena workload tidak merata atau ada member yang sudah keluar.
  
@@ -237,6 +229,7 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
         }
     }
 
+    // ✅ LOGIKA BARU SESUAI PERMINTAAN: Hitung Tugas Selesai & Sisa Tugas
     static async RebalanceGroup(req, res) {
         const { group_id } = req.body;
  
@@ -245,16 +238,18 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
         }
  
         try {
-            // 1. Ambil semua subtask di group yang belum selesai
-            const taskQuery = `
-                SELECT d.detail_task_id, d.detail_task_name, d.detail_task_deadline, d.user_id, t.task_title
+            // 1. Ambil SEMUA tugas (selesai maupun belum) untuk menghitung statistik historis
+            const allTasksQuery = `
+                SELECT d.detail_task_id, d.detail_task_name, d.detail_task_deadline, d.detail_task_status, d.user_id, t.task_title
                 FROM tr_detail_task d
                 JOIN tr_task t ON d.task_id = t.task_id
-                WHERE t.group_id = $1 AND d.detail_task_status NOT IN ('completed', 'C') 
-                AND d.audited_activity <> 'D' AND t.audited_activity <> 'D'
+                WHERE t.group_id = $1 AND d.audited_activity <> 'D' AND t.audited_activity <> 'D'
             `;
-            const tasksResult = await pool.query(taskQuery, [group_id]);
-            const unfinished = tasksResult.rows;
+            const allTasksResult = await pool.query(allTasksQuery, [group_id]);
+            const allTasks = allTasksResult.rows;
+
+            // Saring hanya tugas yang belum selesai untuk dibagikan ke AI
+            const unfinished = allTasks.filter(s => s.detail_task_status !== 'completed' && s.detail_task_status !== 'C');
  
             if (unfinished.length === 0) {
                 return res.status(200).json({ status: "sukses", pesan: "Tim ini tidak punya task yang perlu di-rebalance!" });
@@ -266,16 +261,23 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
                 return res.status(400).json({ status: "gagal", pesan: "Tidak ada member aktif di group ini!" });
             }
  
-            // 3. Susun data untuk AI
-            const workloadMap = {};
-            members.forEach(m => { workloadMap[m.user_id] = 0; });
-            unfinished.forEach(s => {
-                if (workloadMap[s.user_id] !== undefined) workloadMap[s.user_id]++;
+            // 3. Susun data statistik "Selesai" dan "Sisa"
+            const completedMap = {};
+            const pendingMap = {};
+            members.forEach(m => { completedMap[m.user_id] = 0; pendingMap[m.user_id] = 0; });
+            
+            allTasks.forEach(s => {
+                if (s.detail_task_status === 'completed' || s.detail_task_status === 'C') {
+                    if (completedMap[s.user_id] !== undefined) completedMap[s.user_id]++;
+                } else {
+                    if (pendingMap[s.user_id] !== undefined) pendingMap[s.user_id]++;
+                }
             });
  
             const memberList = members.map(m => {
                 const skills = parseSkills(m.user_skill);
-                return `- ${m.user_full_name} (ID: ${m.user_id}, Skills: ${skills.length > 0 ? skills.join(', ') : 'Tidak ada'}, Beban saat ini: ${workloadMap[m.user_id] || 0} subtask)`;
+                // AI disuapi data historis kerja keras tiap anggota tim
+                return `- ${m.user_full_name} (ID: ${m.user_id}, Skills: ${skills.length > 0 ? skills.join(', ') : 'Tidak ada'}, Tugas Selesai: ${completedMap[m.user_id] || 0}, Sisa Tugas: ${pendingMap[m.user_id] || 0})`;
             }).join('\n');
  
             const unfinishedList = unfinished.map(s =>
@@ -284,17 +286,17 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
  
             // 4. Tembak ke Gemini
             const prompt = `
-Kamu adalah AI manajer proyek level eksekutif. Tolong ratakan ulang SELURUH tugas di tim ini.
+Kamu adalah AI manajer proyek level eksekutif. Tolong ratakan ulang SELURUH tugas yang belum selesai di tim ini.
  
-MEMBER TIM + SKILL + BEBAN KERJA SAAT INI:
+MEMBER TIM + SKILL + STATISTIK TUGAS:
 ${memberList}
 
-DAFTAR TUGAS YANG HARUS DIBAGI ULANG:
+DAFTAR SISA TUGAS YANG HARUS DIBAGI ULANG:
 ${unfinishedList}
  
-INSTRUKSI:
-1. Assign ulang semua subtask di atas ke member yang aktif.
-2. Pastikan BEBAN KERJA MERATA secara total.
+INSTRUKSI PENTING:
+1. Assign ulang semua sisa tugas di atas ke member yang aktif.
+2. Lihat metrik "Sisa Tugas". Orang yang "Sisa Tugas"-nya 0 atau paling sedikit HARUS mendapat porsi tugas yang di-rebalance lebih banyak.
 3. Cocokkan skill member dengan nama tugasnya (Misal tugas UI ke ahli Frontend).
 4. JANGAN ubah deadline tugasnya.
  
@@ -334,7 +336,7 @@ Balas HANYA dengan JSON array berikut, tanpa markdown:
             }
  
             const successCount = updateResults.filter(r => r.status === 'Success').length;
-            res.status(200).json({ status: "sukses", pesan: `${successCount} tugas tim berhasil diratakan ulang oleh AI!` });
+            res.status(200).json({ status: "sukses", pesan: `${successCount} sisa tugas berhasil diratakan ulang oleh AI!` });
  
         } catch (err) {
             console.error("Error di AIController (RebalanceGroup):", err.message);
