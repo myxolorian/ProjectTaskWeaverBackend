@@ -9,6 +9,16 @@ class ChatController {
             const result = await ChatService.sendChat(group_id, user_id, channel_id, chat_message);
 
             if (result.isSuccess) {
+                // Broadcast real-time ke semua anggota channel (aditif; alur REST/SP tidak berubah)
+                try {
+                    const io = req.app.get('io');
+                    const list = await ChatService.GetChatByChannelAndGroup(group_id, channel_id);
+                    const newMsg = list?.data?.[list.data.length - 1]; // urut ASC -> terbaru di akhir
+                    if (io && newMsg) io.to(`channel:${channel_id}`).emit('chat:new', newMsg);
+                } catch (broadcastErr) {
+                    console.error("Broadcast chat:new gagal:", broadcastErr.message);
+                }
+
                 res.status(201).json({
                     status: "sukses",
                     pesan: result.pesan

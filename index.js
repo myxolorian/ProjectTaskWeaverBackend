@@ -1,8 +1,10 @@
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
-const multer = require('multer'); 
+const multer = require('multer');
 const { getConnection } = require('./src/config/db.js');
+const { initSocket } = require('./src/config/socket.js');
 const frontEndUrl = 'http://localhost:5173';
 
 const AuthController = require('./src/controller/AuthController');
@@ -100,7 +102,12 @@ app.get('/', (req, res) => {
     res.send('Backend TaskWeaver (Supabase Version) berjalan!');
 });
 
-app.listen(port, () => {
+// Bungkus Express app dengan HTTP server agar bisa dipakai bersama Socket.IO
+const server = http.createServer(app);
+const io = initSocket(server);
+app.set('io', io); // agar controller bisa akses lewat req.app.get('io')
+
+server.listen(port, () => {
     console.log(`Server TaskWeaver jalan di port ${port}`);
     console.log(`Coba akses: http://localhost:${port}`);
 });
