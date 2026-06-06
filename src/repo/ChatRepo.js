@@ -5,7 +5,7 @@ class ChatRepo {
 
     static async sendChat(group_id, user_id, channel_id, chat_message) {
         try {
-            // 1. Eksekusi Stored Procedure untuk menyimpan pesan baru
+           
             const query = `SELECT status, message FROM send_chat($1, $2, $3, $4)`;
             const values = [group_id, user_id, channel_id, chat_message];
 
@@ -14,7 +14,6 @@ class ChatRepo {
 
             let newChatData = null;
 
-            // 2. Jika SP sukses, ambil pesan terakhir yang baru saja masuk di channel ini
             if (responsDariSP && responsDariSP.status.toLowerCase() === 'success') {
                 const latestChatResult = await pool.query(
                     `SELECT * FROM get_chat_by_channel_and_group($1, $2) ORDER BY audited_time DESC LIMIT 1`,
@@ -31,7 +30,7 @@ class ChatRepo {
             return {
                 status: responsDariSP.status,
                 pesan: responsDariSP.message,
-                data: newChatData // Membawa data objek pesan tunggal yang riil
+                data: newChatData 
             };
         } catch (err) {
             console.error("Error di Chat Repo (Send Chat):", err.message);

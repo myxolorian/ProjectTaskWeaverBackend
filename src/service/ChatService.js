@@ -13,7 +13,7 @@ class ChatService {
                 return { 
                     isSuccess: true, 
                     pesan: result.pesan,
-                    data: result.data // Meneruskan data chat tunggal
+                    data: result.data 
                 };
             } else {
                 return { isSuccess: false, pesan: result.pesan || 'Gagal mengirim pesan' };

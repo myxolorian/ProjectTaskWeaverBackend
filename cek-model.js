@@ -20,7 +20,6 @@ async function cekModel() {
         } else if (data.models) {
             console.log("\n✅ DAFTAR MODEL YANG BISA KAMU PAKAI:");
             data.models.forEach(m => {
-                // Hanya tampilkan model yang bisa dipakai untuk chat/teks
                 if (m.supportedGenerationMethods && m.supportedGenerationMethods.includes("generateContent")) {
                     console.log(`- ${m.name.replace('models/', '')}`);
                 }

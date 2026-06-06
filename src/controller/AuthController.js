@@ -103,7 +103,6 @@ class AuthController {
             if (result.isSuccess) {
                 res.status(200).json({ 
                     status: "sukses", 
-                    // Keluarkan user_skill langsung agar bisa ditangkap oleh React
                     user_skill: result.data ? result.data.user_skill : "" 
                 });
             } else {

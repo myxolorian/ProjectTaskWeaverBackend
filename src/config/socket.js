@@ -16,12 +16,10 @@ function initSocket(server) {
     io.on('connection', (socket) => {
         console.log('🔌 Socket connected:', socket.id);
 
-        // Client masuk ke "room" channel saat membuka sebuah channel
         socket.on('joinChannel', ({ channel_id }) => {
             if (channel_id != null) socket.join(`channel:${channel_id}`);
         });
 
-        // Client keluar dari room saat pindah channel / menutup chat
         socket.on('leaveChannel', ({ channel_id }) => {
             if (channel_id != null) socket.leave(`channel:${channel_id}`);
         });

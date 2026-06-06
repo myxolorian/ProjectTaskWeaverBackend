@@ -50,7 +50,7 @@ class TaskController {
     }
 
     static async DeleteTask(req, res) {
-		const { Task_Id, requester_user_Id } = req.body; // kalau mau test  postman, pastikan body nya sesuai dengan ini ya, jadi group_name dan user_id harus ada di body
+		const { Task_Id, requester_user_Id } = req.body; 
 
         try {
             const result = await TaskService.DeleteTask(Task_Id, requester_user_Id);
@@ -73,7 +73,7 @@ class TaskController {
     }
 
     static async UpdateTaskStatus(req, res) {
-		const { Task_Id, NewStatus, requester_user_Id } = req.body; // kalau mau test postman, pastikan body nya sesuai dengan ini ya
+		const { Task_Id, NewStatus, requester_user_Id } = req.body; 
 
         try {
             const result = await TaskService.UpdateTaskStatus(Task_Id, NewStatus, requester_user_Id);

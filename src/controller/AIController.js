@@ -229,7 +229,7 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
         }
     }
 
-    // ✅ LOGIKA BARU SESUAI PERMINTAAN: Hitung Tugas Selesai & Sisa Tugas
+    // Hitung Tugas Selesai & Sisa Tugas
     static async RebalanceGroup(req, res) {
         const { group_id } = req.body;
  
@@ -238,7 +238,6 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
         }
  
         try {
-            // 1. Ambil SEMUA tugas (selesai maupun belum) untuk menghitung statistik historis
             const allTasksQuery = `
                 SELECT d.detail_task_id, d.detail_task_name, d.detail_task_deadline, d.detail_task_status, d.user_id, t.task_title
                 FROM tr_detail_task d
@@ -248,20 +247,17 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
             const allTasksResult = await pool.query(allTasksQuery, [group_id]);
             const allTasks = allTasksResult.rows;
 
-            // Saring hanya tugas yang belum selesai untuk dibagikan ke AI
             const unfinished = allTasks.filter(s => s.detail_task_status !== 'completed' && s.detail_task_status !== 'C');
  
             if (unfinished.length === 0) {
                 return res.status(200).json({ status: "sukses", pesan: "Tim ini tidak punya task yang perlu di-rebalance!" });
             }
  
-            // 2. Ambil members aktif di group
             const members = await getGroupMembersWithSkills(group_id);
             if (!members || members.length === 0) {
                 return res.status(400).json({ status: "gagal", pesan: "Tidak ada member aktif di group ini!" });
             }
- 
-            // 3. Susun data statistik "Selesai" dan "Sisa"
+
             const completedMap = {};
             const pendingMap = {};
             members.forEach(m => { completedMap[m.user_id] = 0; pendingMap[m.user_id] = 0; });
@@ -276,7 +272,6 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
  
             const memberList = members.map(m => {
                 const skills = parseSkills(m.user_skill);
-                // AI disuapi data historis kerja keras tiap anggota tim
                 return `- ${m.user_full_name} (ID: ${m.user_id}, Skills: ${skills.length > 0 ? skills.join(', ') : 'Tidak ada'}, Tugas Selesai: ${completedMap[m.user_id] || 0}, Sisa Tugas: ${pendingMap[m.user_id] || 0})`;
             }).join('\n');
  
@@ -284,7 +279,6 @@ Balas HANYA dengan JSON array berikut, tanpa penjelasan, tanpa markdown:
                 `- ID: ${s.detail_task_id}, Nama: "${s.detail_task_name}", Asal Task Besar: "${s.task_title}", Deadline: ${s.detail_task_deadline}`
             ).join('\n');
  
-            // 4. Tembak ke Gemini
             const prompt = `
 Kamu adalah AI manajer proyek level eksekutif. Tolong ratakan ulang SELURUH tugas yang belum selesai di tim ini.
  
@@ -321,7 +315,6 @@ Balas HANYA dengan JSON array berikut, tanpa markdown:
                 return res.status(500).json({ status: "error", pesan: "AI response tidak valid, coba lagi." });
             }
  
-            // 5. Update Database
             const updateResults = [];
             for (const sub of rebalanced) {
                 try {

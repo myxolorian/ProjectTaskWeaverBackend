@@ -1,7 +1,5 @@
 class SkillModel {
-    //data disini sesuai dengan di database, jadi harus sesuai dengan yang di select di repo
-
-
+   
     constructor() {
         this.user_id = null;
         this.user_skill = null;

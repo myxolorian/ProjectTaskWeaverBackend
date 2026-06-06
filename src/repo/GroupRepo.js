@@ -5,9 +5,6 @@ class GroupRepo {
 
     static async InsertGroup(groupName, userId, group_description, invite_code,) {
         try {
-            // Parameter order matches GroupService call:
-            // InsertGroup(groupName, userId, group_description, invite_code)
-            // SP: insert_group($1=groupName, $2=userId, $3=group_description, $4=invite_code)
             const query = `SELECT status, message FROM insert_group($1, $2, $3, $4)`;
             const values = [groupName, userId, invite_code, group_description];
 

@@ -1,7 +1,5 @@
 class TaskModel {
-    //data disini sesuai dengan di database, jadi harus sesuai dengan yang di select di repo
-
-
+  
     constructor() {
         this.Group_Id = null;
         this.TaskName = null;

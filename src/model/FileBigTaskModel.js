@@ -2,8 +2,8 @@ class FileBigTaskModel {
     constructor() {
         this.file_id = null;
         this.task_id = null;
-        this.task_title = null;   // hanya terisi di get_by_group
-        this.group_id = null;     // hanya terisi di get_by_group
+        this.task_title = null;   
+        this.group_id = null;     
         this.file_name = null;
         this.file_url = null;
         this.audited_time = null;

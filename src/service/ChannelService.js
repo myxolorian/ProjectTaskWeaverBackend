@@ -9,7 +9,7 @@ class ChannelService {
 
         try {
             const result = await ChannelRepo.createChannel(group_id, user_id, channel_name);
-            // Perbaikan: Toleransi huruf kapital/kecil dari DB
+            
             if (result.status && result.status.toLowerCase() === 'success') {
                 return { isSuccess: true, pesan: result.pesan };
             } else {

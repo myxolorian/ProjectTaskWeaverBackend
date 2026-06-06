@@ -3,7 +3,7 @@ const GroupService = require('../service/GroupService');
 class GroupController {
 
     static async InsertGroup(req, res) {
-        // Body: { group_name, user_id, group_description, invite_code }
+    
         const { group_name, user_id, group_description, invite_code } = req.body;
 
         console.log('[GroupController] InsertGroup body:', req.body);
@@ -13,7 +13,6 @@ class GroupController {
         }
 
         try {
-            // Call Service with consistent order: (groupName, userId, group_description, invite_code)
             const result = await GroupService.InsertGroup(group_name, user_id, group_description, invite_code);
 
             if (result.isSuccess) {
@@ -145,8 +144,6 @@ class GroupController {
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
-
-    // flow: user insert invite code -> get group id by invite code -> join group by group id
 
     static async GetGroupByUserID(req, res) {
         const { user_id } = req.body;

@@ -59,18 +59,17 @@ class AuthService {
             return { isSuccess: false, pesan: 'user_id dan user_skill wajib diisi!' };
         }
         
-        // DITAMBAHKAN TRY DI SINI
         try { 
             const checkSkill = await AuthRepo.GetSkill(user_id);
             
             let result;
-            // 2. Tentukan mau Insert atau Update berdasarkan jawaban Supabase
+        
             if (checkSkill.status === 'Error' && checkSkill.pesan === 'Skill belum diisi') {
-                result = await AuthRepo.InsertSkill(user_id, user_skill); // Belum ada, maka Insert
+                result = await AuthRepo.InsertSkill(user_id, user_skill); 
             } else if (checkSkill.status === 'Success') {
-                result = await AuthRepo.UpdateSkill(user_id, user_skill); // Sudah ada, maka Update
+                result = await AuthRepo.UpdateSkill(user_id, user_skill); 
             } else {
-                return { isSuccess: false, pesan: checkSkill.pesan }; // Error lain
+                return { isSuccess: false, pesan: checkSkill.pesan }; 
             }
             // console.log("result insert/update:", JSON.stringify(result));
             if (result.status === 'Success') {
@@ -110,7 +109,7 @@ class AuthService {
             if (result.status === 'Success') {
                 return { isSuccess: true, pesan: result.pesan, data: result.data };
             } else if (result.status === 'Error' && result.pesan === 'Skill belum diisi') {
-                // Biar frontend React tidak crash saat skill belum ada
+                
                 return { isSuccess: true, pesan: "Skill kosong", data: { user_skill: "" } };
             } else {
                 return { isSuccess: false, pesan: result.pesan };

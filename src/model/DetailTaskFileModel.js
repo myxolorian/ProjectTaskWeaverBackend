@@ -7,8 +7,7 @@ class DetailTaskFileModel {
         this.file_name = null;
         this.file_url = null;
         this.upload_time = null;
-        this.file_category = null; // e.g., 'document', 'image', 'other'
-
+        this.file_category = null; 
     }
 
     fillFromDb(row) {

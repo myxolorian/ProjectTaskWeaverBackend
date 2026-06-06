@@ -6,7 +6,7 @@ class ChatModel {
         this.user_id = null;
         this.channel_id = null;
         this.chat_message = null;
-        this.user_full_name = null;  //buat return nama saat chatting
+        this.user_full_name = null;  
         this.audited_activity = null;
         this.audited_time = null;
     }
@@ -19,7 +19,7 @@ class ChatModel {
         this.user_id = row.user_id;
         this.channel_id = row.channel_id;
         this.chat_message = row.chat_message;
-        this.user_full_name = row.user_full_name;  //buat return nama saat chatting
+        this.user_full_name = row.user_full_name;  
         this.audited_activity = row.audited_activity;
         this.audited_time = row.audited_time;
     }

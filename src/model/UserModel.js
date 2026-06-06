@@ -21,5 +21,3 @@ class UserModel {
 }
 
 module.exports = UserModel;
-
-//user update password dan user-skill

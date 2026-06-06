@@ -11,8 +11,7 @@ class GroupService {
         try {
             console.log('[GroupService] InsertGroup called with:', { groupName, userId, group_description, invite_code });
 
-            // Parameter order: (groupName, userId, group_description, invite_code)
-            // matches GroupRepo.InsertGroup signature
+
             const result = await GroupRepo.InsertGroup(groupName, userId, group_description, invite_code);
 
             console.log('[GroupService] InsertGroup result:', result);

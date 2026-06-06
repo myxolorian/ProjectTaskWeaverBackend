@@ -9,9 +9,8 @@ class ChatController {
             const result = await ChatService.sendChat(group_id, user_id, channel_id, chat_message);
 
             if (result.isSuccess) {
-                const newMsg = result.data; // Mengambil data pesan yang didapat dari repo
+                const newMsg = result.data; 
 
-                // Broadcast real-time secara instan tanpa membebani query get total chat lagi
                 try {
                     const io = req.app.get('io');
                     if (io && newMsg) {
@@ -21,7 +20,6 @@ class ChatController {
                     console.error("Broadcast chat:new gagal:", broadcastErr.message);
                 }
 
-                // Mengembalikan data objek utuh ke frontend agar bisa ditukar id-nya (id-swapping)
                 res.status(201).json({
                     status: "sukses",
                     pesan: result.pesan,

@@ -109,10 +109,9 @@ app.get('/', (req, res) => {
     res.send('Backend TaskWeaver (Supabase Version) berjalan!');
 });
 
-// Bungkus Express app dengan HTTP server agar bisa dipakai bersama Socket.IO
 const server = http.createServer(app);
 const io = initSocket(server);
-app.set('io', io); // agar controller bisa akses lewat req.app.get('io')
+app.set('io', io); 
 
 server.listen(port, () => {
     console.log(`Server TaskWeaver jalan di port ${port}`);
