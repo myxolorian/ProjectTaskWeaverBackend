@@ -19,8 +19,7 @@ const ActivityController = require('./src/controller/ActivityController');
 const FileBigTaskController = require('./src/controller/FileBigTaskController');
 
 const app = express();
-const port = 3000;
-
+const port = process.env.PORT || 3000;
 const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors({
