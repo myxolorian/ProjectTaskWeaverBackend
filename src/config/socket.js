@@ -1,6 +1,6 @@
 const { Server } = require('socket.io');
 
-const frontEndUrl = 'http://localhost:5173';
+const frontEndUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 let io = null;
 
