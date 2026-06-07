@@ -32,7 +32,7 @@ class ChatController {
                 });
             }
         } catch (err) {
-            console.error("❌ Error di Controller Chat (SendChat):", err.message);
+            console.error("Error di Controller Chat (SendChat):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
@@ -55,7 +55,7 @@ class ChatController {
                 });
             }
         } catch (err) {
-            console.error("❌ Error di Controller Chat (UpdateChat):", err.message);
+            console.error("Error di Controller Chat (UpdateChat):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
@@ -78,7 +78,7 @@ class ChatController {
                 });
             }
         } catch (err) {
-            console.error("❌ Error di Controller Chat (DeleteChat):", err.message);
+            console.error("Error di Controller Chat (DeleteChat):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }
@@ -90,7 +90,7 @@ class ChatController {
             const result = await ChatService.GetChatByChannelAndGroup(group_id, channel_id);
             res.status(200).json({ status: "sukses", data: result.data });
         } catch (err) {
-            console.error("❌ Error di Controller Chat (GetChat):", err.message);
+            console.error("Error di Controller Chat (GetChat):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }

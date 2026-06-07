@@ -20,7 +20,7 @@ class AuthController {
                 });
             }
         } catch (err) {
-            console.error("❌ Error di Controller (Register):", err.message);
+            console.error("Error di Controller (Register):", err.message);
             res.status(500).json({ status: "error", pesan: "Terjadi kesalahan pada server" });
         }
     }

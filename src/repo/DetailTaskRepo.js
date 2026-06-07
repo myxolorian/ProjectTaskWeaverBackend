@@ -1,8 +1,8 @@
 const { pool } = require('../config/db');
 const DetailTaskModel = require('../model/DetailTaskname');
- 
+
 class DetailTaskRepo {
- 
+
     static async InsertDetailTask(task_id, user_id, detail_task_name, detail_task_deadline) {
         try {
             const query = `SELECT status, message FROM insert_detail_task($1, $2, $3, $4)`;
@@ -15,33 +15,20 @@ class DetailTaskRepo {
             throw err;
         }
     }
- 
+
     static async GetDetailTasksByUser(user_id) {
         try {
-            const query = `
-                SELECT 
-                    dt.detail_task_id,
-                    dt.task_id,
-                    dt.detail_task_name,
-                    dt.detail_task_deadline,
-                    dt.detail_task_status,
-                    t.group_id,
-                    g.group_name
-                FROM tr_detail_task dt
-                JOIN tr_task t ON dt.task_id = t.task_id
-                JOIN ms_group g ON t.group_id = g.group_id
-                WHERE dt.user_id = $1 
-                  AND dt.audited_activity <> 'D' 
-                  AND t.audited_activity <> 'D';
-            `;
-            const result = await pool.query(query, [user_id]);
-            return result.rows; 
+            const result = await pool.query(
+                `SELECT * FROM get_detail_tasks_by_user($1)`,
+                [user_id]
+            );
+            return result.rows;
         } catch (err) {
             console.error("Error di Repo DetailTask (GetByUser):", err.message);
             throw err;
         }
     }
- 
+
     static async GetDetailTasksByTask(task_id) {
         try {
             const query = `SELECT * FROM get_detail_tasks_by_task($1::integer)`;
@@ -56,7 +43,7 @@ class DetailTaskRepo {
             throw err;
         }
     }
- 
+
     static async GetDetailTasksByGroup(group_id) {
         try {
             const query = `SELECT * FROM get_detail_tasks_by_group($1::integer)`;
@@ -71,11 +58,13 @@ class DetailTaskRepo {
             throw err;
         }
     }
- 
+
     static async UpdateDetailTaskStatus(detail_task_id, new_status) {
         try {
-            const query = `UPDATE tr_detail_task SET detail_task_status = $2, audited_time = now() WHERE detail_task_id = $1`;
-            await pool.query(query, [detail_task_id, new_status]);
+            await pool.query(
+                `SELECT update_detail_task_status($1, $2)`,
+                [detail_task_id, new_status]
+            );
             return { status: 'Success', pesan: 'Status berhasil diperbarui' };
         } catch (err) {
             console.error("Error di Repo DetailTask (UpdateStatus):", err.message);
@@ -83,6 +72,5 @@ class DetailTaskRepo {
         }
     }
 }
- 
+
 module.exports = DetailTaskRepo;
- 

@@ -16,7 +16,7 @@ class AuthService {
                 return { isSuccess: false, pesan: result.pesan };
             }
         } catch (err) {
-            console.error("❌ Error di Service (Register):", err.message);
+            console.error("Error di Service (Register):", err.message);
             throw err;
         }
     }
