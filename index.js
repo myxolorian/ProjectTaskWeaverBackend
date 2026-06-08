@@ -5,7 +5,7 @@ const cors = require('cors');
 const multer = require('multer');
 const { getConnection } = require('./src/config/db.js');
 const { initSocket } = require('./src/config/socket.js');
-const frontEndUrl = 'http://localhost:5173';
+const frontEndUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 const AuthController = require('./src/controller/AuthController');
 const GroupController = require('./src/controller/GroupController');
@@ -19,8 +19,7 @@ const ActivityController = require('./src/controller/ActivityController');
 const FileBigTaskController = require('./src/controller/FileBigTaskController');
 
 const app = express();
-const port = 3000;
-
+const port = process.env.PORT || 3000;
 const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors({
